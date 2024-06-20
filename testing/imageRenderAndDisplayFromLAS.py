@@ -24,17 +24,43 @@
 import os
 import sys
 import math
+import cv2
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib import colors
 
 os.environ["_CCTRACE_"]="ON" # only if you want C++ debug traces
 
 from gendata import getSampleCloud, getSampleCloud2, dataDir, dataExtDir, isCoordEqual
 import cloudComPy as cc
 print(dataDir)
-#---render001-begin
+
 cloud1 = cc.loadPointCloud("smallsection-processed_LLS_2024-03-15T051615.010100_0_3.las")
 cloud1.setCurrentScalarField(0)
 cloud1.setCurrentDisplayedScalarField(0)
 cc.addToRenderScene(cloud1)
+
+
+
+#---intesity hist start
+dic = cloud1.getScalarFieldDic()
+sf=cloud1.getScalarField(dic['Intensity'])
+asf= sf.toNpArray()
+
+(n, bins, patches) = plt.hist(asf, bins=256, density=1) # histogram for matplotlib
+fracs = bins / bins.max()
+norm = colors.Normalize(fracs.min(), fracs.max())
+for thisfrac, thispatch in zip(fracs, patches):
+    color = plt.cm.rainbow(norm(thisfrac))
+    thispatch.set_facecolor(color)
+
+plt.show()
+#---intesity hist end
+
+
+
+#---render-display-begin
 
 struct = cc.importFile("smallsection-processed_LLS_2024-03-15T051615.010100_0_3.las")
 
@@ -44,16 +70,31 @@ struct = cc.importFile("smallsection-processed_LLS_2024-03-15T051615.010100_0_3.
 #     cloud.showNormals(True)
 #     cc.addToRenderScene(cloud)
 
+
+res = cloud1.exportCoordToSF(True, True, True)
+sfx=cloud1.getScalarField(0)
+sfy=cloud1.getScalarField(1)
+sfz=cloud1.getScalarField(2)
+
+colorScalesManager = cc.ccColorScalesManager.GetUniqueInstance()
+scale=colorScalesManager.getDefaultScale(cc.DEFAULT_SCALES.HSV_360_DEG)
+sfx.setColorScale(scale)
+
+
+cc.setOrthoView()
+cc.setGlobalZoom()
+
+cc.setIsoView1()
+#cc.setCameraPos((-53.7, 57.8, 27.7))
 cc.render(os.path.join(dataDir, "render1.png"), 1280,720)
 
-import cv2
+
 
 img_1=cv2.imread(os.path.join(dataDir, "render1.png"))
 
 cv2.imshow('image', img_1)
 cv2.waitKey(0)
 
-#---render001-end
+#---render-display-end
 
-print(dataDir)
 
