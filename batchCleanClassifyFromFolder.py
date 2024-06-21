@@ -17,11 +17,14 @@ import cloudComPy.CSF
 input_file_name = "smallsection-processed_LLS_2024-03-15T051615.010100_0_3.las"
 
 
+def octreeLevel(octree):
+    for elem in range(11, 6, -1):
+        if octree.getCellSize(elem) > .06 :
+            return elem
 
 
-
-def clean_classify(input_file):
-    cloud1 = cc.loadPointCloud(input_file)
+def clean_classify(path, filename):
+    cloud1 = cc.loadPointCloud(path + "/"+filename)
 
     res = cloud1.exportCoordToSF(True, True, True)
     sfx = cloud1.getScalarField(3)
@@ -57,9 +60,23 @@ def clean_classify(input_file):
 
     # remove-statisitcal-outliers---end
 
-    # ---extractCC02-begin
+    ## select-octree-lvl---begin
 
-    res1 = cc.ExtractConnectedComponents(clouds=[cloud3], minComponentSize=10, randomColors=True)
+
+    octree = cloud3.computeOctree(progressCb=None, autoAddChild=True)
+
+    level = octreeLevel(octree)
+
+
+    ## select-octree-lvl--end
+
+
+    # ---extractFish-begin
+
+    res1 = cc.ExtractConnectedComponents(clouds=[cloud3],
+                                         minComponentSize=10,
+                                         octreeLevel = level,
+                                         randomColors=True)
     print(res1)
 
     # cloud01 = cc.MergeEntities(res1[1], createSFcloudIndex=True)
@@ -79,12 +96,12 @@ def clean_classify(input_file):
     cloud4.setName("Rough ground")
 
     cloud5 = cc.MergeEntities(res1[1][1:], createSFcloudIndex=True)
-    cloud5.setName("Rough fish " + str(len(res1[1][1:])) + " total")
+    cloud5.setName("Rough fish " + str(len(res1[1][1:])) + " total: Octree Level " + str(level))
 
     print(str(len(res1[1][1:])) + " total fish")
 
     res1 = None
-    # ---extractCC02-end
+    # ---extractFish-end
 
     # --- create DEM --- begin
     cloud4.setCurrentScalarField(5)
@@ -98,11 +115,26 @@ def clean_classify(input_file):
     final_cloud = cloud2
     # cloud01, cloud02, cloud2, cloud3,
     # ---export-files-begin
-    res = cc.SaveEntities([cloud4, cloud5, seafloorDEM], "CLEAN"+ input_file_name + ".bin")
+    res = cc.SaveEntities([cloud3,cloud4, cloud5, seafloorDEM], "CLEAN"+ filename[:-4] + ".bin")
 
     # --- export-files-end
 
 
-clean_classify(input_file_name)
+
+path = "B:\Xander\Good Data"
+dir_list = os.listdir(path)
+print("Files and directories in '", path, "' :")
+print(dir_list)
+
+
+for file in dir_list:
+    if file.endswith(".las"):
+        # Prints only text file present in My Folder
+        print(file)
+        clean_classify(path, file )
+
+
+
+#clean_classify("processed_LLS_2024-03-15T051615.010100_0_1.las")
 
 
