@@ -103,6 +103,8 @@ def clean_classify(path, filename):
     print(str(len(res1[1][1:])) + " total fish")
 
     res1 = None
+    res3 = None
+    res4 = None
     # ---extractFish-end
 
     # --- create DEM --- begin
@@ -189,7 +191,10 @@ def clean_classify(path, filename):
     ## crop out the messy stuff -- start
     dic5 = cloud10.getScalarFieldDic()
     sf6 = cloud10.getScalarField(dic5['Coord. Y'])
+    sf7 = cloud10.getScalarField(dic5['Coord. X'])
     cloud10.setCurrentScalarField(dic5['Coord. Y'])
+
+
 
     cloud12 = cc.filterBySFValue(sf6.getMin() + .7, sf6.getMax() - .7, cloud10)
     cloud12.setName("Cropped")
@@ -205,7 +210,7 @@ def clean_classify(path, filename):
 
     octree2 = cloud12.computeOctree(progressCb=None, autoAddChild=True)
 
-    level2 = octreeLevel(octree2, .03)
+    level2 = octreeLevel(octree2, .02)
 
 
     ## select-octree-lvl-for-coral--end
@@ -220,7 +225,7 @@ def clean_classify(path, filename):
                                          minComponentSize=10,
                                          octreeLevel = level2,
                                          randomColors=True,
-                                          maxNumberComponents = 1000)
+                                          maxNumberComponents = 100000)
     print(res12)
 
 
@@ -230,11 +235,24 @@ def clean_classify(path, filename):
     # cloud42 = cc.MergeEntities(res12[1], createSFcloudIndex=True)
     # cloud42.setName("All Classified Coral Points: V1")
 
+    print(str(len(res12[1])) + " total coral")
+
+
     cloud72 = cc.MergeEntities(res12[2], createSFcloudIndex=True)
     cloud72.setName("Not Coral Points")
 
-    cloud62 = cc.MergeEntities(res12[2] + res12[1], createSFcloudIndex=True)
+    print("Section is " + str(sf6.getMin()) + "m by " + str(sf6.getMax()) + "m or " + str(
+        sf6.getMax() - sf6.getMin()) + "m wide")
+
+    print("Section is " + str(sf7.getMin()) + "m by " + str(sf7.getMax()) + "m or " + str(
+        sf7.getMax() - sf7.getMin()) + "m long")
+
+    print("Area of section is " + str((sf7.getMax() - sf7.getMin()) * (sf6.getMax() - sf6.getMin())) + "m^2")
+
+    res43 = res12[2] + res12[1]
+    cloud62 = cc.MergeEntities(res43, createSFcloudIndex=True)
     cloud62.setName("All Coral + Non Coral points")
+    print("hello 2")
 
     cloud52 = cc.MergeEntities(res12[1], createSFcloudIndex=True)
     cloud52.setName("Coral Points : V1 | " + str(len(res12[1])) + " total coral | Utilized Octree Level for coral segmentation: " + str(level2))
@@ -242,6 +260,7 @@ def clean_classify(path, filename):
     print(str(len(res12[1])) + " total coral")
 
     res12 = None
+    res43 = None
     # ---extractcoral-end
 
     ## classify the corals -- start
@@ -316,20 +335,20 @@ def clean_classify(path, filename):
 
 
 
-# path = r"B:\Xander\Good Data"
-# dir_list = os.listdir(path)
-# print("Files and directories in '", path, "' :")
-# print(dir_list)
+path = r"B:\Xander\Good Data\Best Data"
+dir_list = os.listdir(path)
+print("Files and directories in '", path, "' :")
+print(dir_list)
 
 
-# for file in dir_list:
-#     if file.endswith(".las"):
-#         # Prints only text file present in My Folder
-#         print(file)
-#         clean_classify(path, file )
+for file in dir_list:
+    if file.endswith(".las") :
+        # Prints only text file present in My Folder
+        print(file)
+        clean_classify(path, file )
 
 
-path = r'C:\Users\Alexander.Swann\PycharmProjects\pythonProject'
-clean_classify(path,"smallsection-processed_LLS_2024-03-15T051615.010100_0_3.las")
+# path = r'C:\Users\Alexander.Swann\PycharmProjects\pythonProject'
+# clean_classify(path,"smallsection-processed_LLS_2024-03-15T051615.010100_0_3.las")
 
 
