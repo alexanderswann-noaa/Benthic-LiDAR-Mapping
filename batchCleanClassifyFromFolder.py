@@ -227,16 +227,16 @@ def clean_classify(path, filename):
 
     #res32 = res12[2] + res42
 
-    cloud42 = cc.MergeEntities(res12[1], createSFcloudIndex=True)
-    cloud42.setName("All Classified Coral Points: V1")
+    # cloud42 = cc.MergeEntities(res12[1], createSFcloudIndex=True)
+    # cloud42.setName("All Classified Coral Points: V1")
 
     cloud72 = cc.MergeEntities(res12[2], createSFcloudIndex=True)
-    cloud72.setName("Not Classified Coral Points")
+    cloud72.setName("Not Coral Points")
 
     cloud62 = cc.MergeEntities(res12[2] + res12[1], createSFcloudIndex=True)
-    cloud62.setName("All points")
+    cloud62.setName("All Coral + Non Coral points")
 
-    cloud52 = cc.MergeEntities(res12[1][0:], createSFcloudIndex=True)
+    cloud52 = cc.MergeEntities(res12[1], createSFcloudIndex=True)
     cloud52.setName("Coral Points : V1 | " + str(len(res12[1])) + " total coral | Utilized Octree Level for coral segmentation: " + str(level2))
 
     print(str(len(res12[1])) + " total coral")
@@ -264,6 +264,8 @@ def clean_classify(path, filename):
 
     colorScalesManager = cc.ccColorScalesManager.GetUniqueInstance()
     scale = colorScalesManager.getDefaultScale(cc.DEFAULT_SCALES.HSV_360_DEG)
+    scale2 = colorScalesManager.getDefaultScale(cc.DEFAULT_SCALES.HIGH_CONTRAST)
+
 
 
     cloud3.getScalarField(0).setColorScale(scale)
@@ -275,8 +277,8 @@ def clean_classify(path, filename):
     cloud10.getScalarField(0).setColorScale(scale)
     cloud11.getScalarField(0).setColorScale(scale)
     cloud12.getScalarField(0).setColorScale(scale)
-    cloud42.getScalarField(0).setColorScale(scale)
-    cloud52.getScalarField(0).setColorScale(scale)
+    #cloud42.getScalarField(0).setColorScale(scale)
+    cloud52.getScalarField(cloud52.getScalarFieldDic()['Original cloud index']).setColorScale(scale2)
     cloud62.getScalarField(0).setColorScale(scale)
     cloud72.getScalarField(0).setColorScale(scale)
 
@@ -287,17 +289,28 @@ def clean_classify(path, filename):
     cloud7.setCurrentDisplayedScalarField(0)
     cloud10.setCurrentDisplayedScalarField(0)
     cloud11.setCurrentDisplayedScalarField(0)
-    cloud42.setCurrentDisplayedScalarField(0)
-    cloud52.setCurrentDisplayedScalarField(0)
+    #cloud42.setCurrentDisplayedScalarField(0)
+    cloud52.setCurrentDisplayedScalarField(cloud52.getScalarFieldDic()['Original cloud index'])
     cloud62.setCurrentDisplayedScalarField(0)
     cloud72.setCurrentDisplayedScalarField(0)
+
+    # for i in res12[1]:
+    #     i.setCurrentDisplayedScalarField(i.getScalarFieldDic()['Original cloud index'])
+    # res = cc.SaveEntities([cloud1, cloud3, cloud5,cloud4, cloud6,cloud7,cloud8,cloud9, cloud10,cloud11,cloud12,  cloud62,cloud72,cloud52, seafloorDEM]+ res12[1] , "CLEAN"+ filename[:-4] + ".bin")
+    # res12 = None
+
+
 
     cc.setOrthoView()
     cc.setGlobalZoom()
 
     cc.setIsoView1()
 
-    res = cc.SaveEntities([cloud1, cloud3, cloud5,cloud4, cloud6,cloud7,cloud8,cloud9, cloud10,cloud11,cloud12, cloud52,cloud42, cloud62,cloud72, seafloorDEM], "CLEAN"+ filename[:-4] + ".bin")
+
+    res = cc.SaveEntities([cloud1, cloud3, cloud5,cloud4, cloud6,cloud7,cloud8,cloud9, cloud10,cloud11,cloud12,  cloud62,cloud72,cloud52, seafloorDEM] , "CLEAN"+ filename[:-4] + ".bin")
+
+
+
 
     # --- export-files-end
 
