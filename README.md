@@ -1,14 +1,87 @@
-Step 1: Install Conda
-Follow These Steps
-https://conda.io/projects/conda/en/latest/user-guide/install/windows.html 
+# Benthic (LiDAR) Mapping
 
-Step 2: Check to see if Conda is installed
-Open Command Prompt and run “conda --version”
+![shark](./figures/shark.jfif)
 
-If getting “'Conda' is not recognized as internal or external command” error
-https://stackoverflow.com/questions/44515769/conda-is-not-recognized-as-internal-or-external-command 
+---
 
-To access environment Variables without Admin Privileges open Control Panel and search environment in the search bar in the upper right corner. Then click Edit environment variables for your account.
+This project is used to further process LiDAR collected by AUVs in the large MDBC initiative. The data, being referred 
+to as "micro bathymetry", is collected using underwater laser scanners with imaging payloads and post-processed by 
+[Voyis](https://voyis.com/).
+
+This repo does the follow:
+- asdf
+- asdf
+- asdf
+- asdf
+
+## Getting Started
+
+Follow the steps below to set up your `anaconda` environment, install dependencies, and run a simple unit test to
+validate proper installation.
+
+### Install
+
+Before getting started, install [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
+Then follow the steps below to install the python dependencies:
+
+```bash
+# cmd
+
+conda create env --name lidar python=3.10 -y
+conda activate lidar
+
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+
+conda install -n base conda-libmamba-solver
+conda config --set solver libmamba   
+
+# This will take a while, go grab a cup of coffee ☕
+conda install -f requirements.txt -y
+```
+
+After this is done, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
+they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613)
+and place the `.7z` file in the `./build` folder.
+
+```bash
+# cmd
+
+pip install py7zr
+python build.py
+
+./build/CloudComPy310/envCloudComPy.bat
+```
+
+### Tests
+
+Now try running the test:
+
+```bash
+# Instructions
+
+
+
+```
+
+If successful, it should output the following:
+- asdf
+- asdf
+- asdf
+
+## Use
+
+Below is an example for how the driving script, `main.py`, can be used:
+
+![GUI Image Here]()
+
+```bash
+# Instructions
+
+
+
+```
+
 
 Step 3: Install and test the CloudComPy binary on Windows 10 or 11, with Conda
 Follow These Steps
