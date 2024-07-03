@@ -14,7 +14,7 @@ Step 3: Install and test the CloudComPy binary on Windows 10 or 11, with Conda
 Follow These Steps
 https://github.com/CloudCompare/CloudComPy/blob/master/doc/UseWindowsCondaBinary.md 
 
-Step 4: Step up environment in pycharm or skip and use argparseFile.py to run from command prompt
+Step 4: Step up environment in pycharm or skip and use argparseFile.py to run from command prompt or use GUI_run.py to run from a GUI
 
 Step 5: download file from this repository and run code.
 
