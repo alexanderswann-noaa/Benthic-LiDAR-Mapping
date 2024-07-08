@@ -40,8 +40,7 @@ conda install --file requirements.txt -y
 ```
 
 After this is done, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
-they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613)
-and place the `.7z` file in the `./build` folder.
+they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
 
 ```bash
 # cmd
@@ -52,26 +51,32 @@ python build.py
 # Run the following
 ./build/CloudComPy310/envCloudComPy.bat
 
-# Expected output
+# Expected output:
 Checking environment, Python test: import cloudComPy
 Environment OK!
 ```
+
+Finally, update you `PYTHONPATH` to have the directory of `CloudCompare`:
+
+```bash
+# cmd
+
+conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare
+conda activate CloudComPy310
+```
+
 
 ### Tests
 
 Now try running the test:
 
 ```bash
-# Instructions
+# cmd
 
-
-
+python src/features/argParse.py data/raw --output-dir data/processed
 ```
 
-If successful, it should output the following:
-- asdf
-- asdf
-- asdf
+If successful, it should output processed `bin` files in `data/processed`
 
 ## Use
 
