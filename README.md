@@ -1,6 +1,6 @@
 # Benthic (LiDAR) Mapping
 
-![shark](./figures/shark.jfif)
+![sharks with](./figures/freakin_lasers.webp)
 
 ---
 
