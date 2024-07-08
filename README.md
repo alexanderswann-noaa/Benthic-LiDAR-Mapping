@@ -49,7 +49,12 @@ and place the `.7z` file in the `./build` folder.
 pip install py7zr
 python build.py
 
+# Run the following
 ./build/CloudComPy310/envCloudComPy.bat
+
+# Expected output
+Checking environment, Python test: import cloudComPy
+Environment OK!
 ```
 
 ### Tests
