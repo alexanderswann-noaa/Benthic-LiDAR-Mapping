@@ -27,17 +27,16 @@ Then follow the steps below to install the python dependencies:
 ```bash
 # cmd
 
-conda create env --name lidar python=3.10 -y
-conda activate lidar
+# Copy this and run, do not change env name
+conda create --name CloudComPy310 python=3.10 -y
+conda activate CloudComPy310
 
-conda config --add channels conda-forge
-conda config --set channel_priority strict
-
-conda install -n base conda-libmamba-solver
-conda config --set solver libmamba   
+conda update -n base -c defaults conda -y
+conda install -n base conda-libmamba-solver -y
+conda config --set solver libmamba 
 
 # This will take a while, go grab a cup of coffee ☕
-conda install -f requirements.txt -y
+conda install --file requirements.txt -y
 ```
 
 After this is done, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
