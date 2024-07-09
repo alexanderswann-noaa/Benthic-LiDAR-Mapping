@@ -82,7 +82,8 @@ If successful, it should output processed `bin` files in `data/processed`
 
 Below is an example for how the driving script, `main.py`, can be used:
 
-![GUI Image Here]()
+![GUI Image](./figures/gui_pic.PNG)
+
 
 ```bash
 # Instructions
