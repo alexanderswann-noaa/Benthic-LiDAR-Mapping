@@ -4,10 +4,6 @@ import re
 import subprocess
 import utm
 import exifread
-import geopandas as gpd
-from shapely.geometry import Point, Polygon, LineString
-from pyproj import Transformer
-import matplotlib.pyplot as plt
 
 
 
@@ -38,10 +34,10 @@ def parse_lasinfo_report(report):
     return min_values, max_values
 
 
-import exifread
 
 
-# based on https://gist.github.com/erans/983821
+
+
 
 def _get_if_exist(data, key):
     if key in data:
