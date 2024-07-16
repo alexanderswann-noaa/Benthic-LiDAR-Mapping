@@ -29,7 +29,7 @@ def octreeLevel(octree, cellSize):
     Returns:
     - int: Selected octree level.
     """
-    for oct_elem in range(11, 6, -1):
+    for oct_elem in range(11, 0, -1):
         if octree.getCellSize(oct_elem) > cellSize:
             print(str(octree.getCellSize(oct_elem)) + " : " + str(oct_elem))
             print(str(octree.getCellSize(oct_elem + 1)) + " : " + str(oct_elem + 1))
@@ -48,7 +48,14 @@ def filterLargeClouds(listOfClouds, maxPoints):
     Returns:
     - int: Index of the filtered cloud.
     """
+    if len(listOfClouds[1]) == 0:
+        return -1
+
+
     for index in range(40):
+        print(index)
+        #print(listOfClouds)
+
         if listOfClouds[1][index].size() < maxPoints:
             return index
 
@@ -82,6 +89,37 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
     originalPointCloud.setCurrentScalarField(0)
     filteredIntensityCloud = cc.filterBySFValue(100, intensityScalarField.getMax(), originalPointCloud)
 
+    print(filteredIntensityCloud.size())
+    print(filteredIntensityCloud.size())
+    print(filteredIntensityCloud.size())
+    print(filteredIntensityCloud.size())
+
+
+
+    y_across = abs(abs(scalarFieldY.getMin()) - abs(scalarFieldY.getMax()))
+    x_across = abs(abs(scalarFieldX.getMin()) - abs(scalarFieldX.getMax()))
+    areatot = x_across * y_across
+    ptsPermeterSquared = filteredIntensityCloud.size()/areatot
+
+    print(y_across)
+    print(x_across)
+    print(areatot)
+    print(ptsPermeterSquared)
+
+
+    if ptsPermeterSquared < 7000 or filteredIntensityCloud.size() < 100000:
+        badOutputDirectory = os.path.join(outputDirectory, "badFiles")
+        if not os.path.exists(badOutputDirectory):
+            os.makedirs(badOutputDirectory)
+        badoutputFile = os.path.join(badOutputDirectory, "BAD" + filename[:-4] + ".las")
+        #badexport = cc.SaveEntities([originalPointCloud], badoutputFile)
+        badexport = cc.SavePointCloud(originalPointCloud, badoutputFile)
+
+
+        return
+
+
+
     # Compute CSF (Conditional Sampling Framework) plugin for filtering lowest z values
     clouds = cc.CSF.computeCSF(filteredIntensityCloud)
     lowZPoints = clouds[0]
@@ -97,11 +135,13 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
     selectedOctreeLevel = octreeLevel(octree, .06)
 
     # Extract connected components (fish points)
+    print(selectedOctreeLevel)
+    print(cleanedPointCloud)
     extractionResult = cc.ExtractConnectedComponents(clouds=[cleanedPointCloud],
                                                      minComponentSize=10,
                                                      octreeLevel=selectedOctreeLevel,
                                                      randomColors=True)
-    print(extractionResult)
+    #print(extractionResult)
 
     smallComponents = [extractionResult[1][0]]
     allComponents = extractionResult[2] + smallComponents
@@ -117,10 +157,16 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
     groundPointsExtra.setName("Ground Points: V1-extra")
 
     fishPointsV1 = cc.MergeEntities(extractionResult[1][1:], createSFcloudIndex=True)
+
+    totalfish = len(extractionResult[1][1:])
+
+    if totalfish < 1:
+        fishPointsV1 = originalPointCloud
+
     fishPointsV1.setName("Fish Points : V1 | " + str(
-        len(extractionResult[1][1:])) + " total fish | Utilized Octree Level for fish segmentation: " + str(
+        totalfish) + " total fish | Utilized Octree Level for fish segmentation: " + str(
         selectedOctreeLevel))
-    print(str(len(extractionResult[1][1:])) + " total fish")
+    print(str(totalfish) + " total fish")
 
     extractionResult = None
     allComponents = None
@@ -180,14 +226,26 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
 
     # Crop out unnecessary components
     potential_coral_dictionary = possibleCoralCloud.getScalarFieldDic()
+    #print(potential_coral_dictionary)
     yCoordSF = possibleCoralCloud.getScalarField(potential_coral_dictionary['Coord. Y'])
     xCoordSF = possibleCoralCloud.getScalarField(potential_coral_dictionary['Coord. X'])
     possibleCoralCloud.setCurrentScalarField(potential_coral_dictionary['Coord. Y'])
 
-    croppedCloud = cc.filterBySFValue(yCoordSF.getMin() + .7, yCoordSF.getMax() - .7, possibleCoralCloud)
+    factor = .14 * abs((yCoordSF.getMin()) - (yCoordSF.getMax()))
+    distanceCross = abs((yCoordSF.getMin()) - (yCoordSF.getMax()))
+    print(distanceCross)
+    print(factor)
+    print(yCoordSF.getMin())
+    print(yCoordSF.getMax())
+    if distanceCross < 3:
+        return
+
+    croppedCloud = cc.filterBySFValue(yCoordSF.getMin() + factor, yCoordSF.getMax() - factor, possibleCoralCloud)
     croppedCloud.setName("Cropped")
 
     cropped_cloud_dictionary = croppedCloud.getScalarFieldDic()
+    print("Hello")
+    print(cropped_cloud_dictionary)
     croppedCloud.setCurrentScalarField(cropped_cloud_dictionary['Intensity'])
     croppedCloud.setCurrentDisplayedScalarField(cropped_cloud_dictionary['Intensity'])
 
@@ -201,7 +259,7 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
                                                           octreeLevel=coralOctreeLevel,
                                                           randomColors=True,
                                                           maxNumberComponents=100000)
-    print(coralExtractionResult)
+    #print(coralExtractionResult)
 
     nonCoralPoints = cc.MergeEntities(coralExtractionResult[2], createSFcloudIndex=True)
     nonCoralPoints.setName("Not Coral Points")
@@ -220,6 +278,9 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
     allCoralAndNonCoralPoints.setName("All Coral + Non Coral points")
 
     lowerBound = filterLargeClouds(coralExtractionResult, 5000)
+
+    if lowerBound == -1:
+        return
 
     coralPoints = cc.MergeEntities(coralExtractionResult[1][lowerBound:], createSFcloudIndex=True)
     coralPoints.setName("Coral Points : V1 | " + str(
@@ -301,10 +362,40 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
     # if not os.path.exists(smallOutputDirectory):
     #     os.makedirs(smallOutputDirectory)
     if exportOption == "all" or exportOption == "small_output":
-        smallOutputFile = os.path.join(outputDirectory, "SMALL" + filename[:-4] + ".bin")
-        exportResult0 = cc.SaveEntities([fishPointsV1, groundPointsBase, coralPoints, seafloorDEM], smallOutputFile)
+        coralPoints.setCurrentDisplayedScalarField(coralPoints.getScalarFieldDic()['Original cloud index'])
+        if totalfish > 0:
+            fishPointsV1.setCurrentDisplayedScalarField(fishPointsV1.getScalarFieldDic()['Original cloud index'])
+        groundPointsBase.setCurrentDisplayedScalarField(groundPointsBase.getScalarFieldDic()['C2M signed distances'])
 
-# Decorate main function with Gooey for GUI-based execution
+        coralPoints.getScalarField(coralPoints.getScalarFieldDic()['Original cloud index']).setColorScale(highContrastScale)
+        if totalfish > 0:
+            fishPointsV1.getScalarField(fishPointsV1.getScalarFieldDic()['Original cloud index']).setColorScale(highContrastScale)
+        groundPointsBase.getScalarField(groundPointsBase.getScalarFieldDic()['C2M signed distances']).setColorScale(highContrastScale)
+
+        lasOutputDirectory = os.path.join(outputDirectory, "lasFiles")
+        if not os.path.exists(lasOutputDirectory):
+            os.makedirs(lasOutputDirectory)
+
+        binOutputDirectory = os.path.join(outputDirectory, "binFiles")
+        if not os.path.exists(binOutputDirectory):
+            os.makedirs(binOutputDirectory)
+
+
+
+
+        smallOutputFile = os.path.join(binOutputDirectory, "SMALL" + filename[:-4] + ".bin")
+        smalllasOutputFile = os.path.join(lasOutputDirectory, "SMALL" + filename[:-4] + ".las")
+        exportResult0 = cc.SaveEntities([fishPointsV1, groundPointsBase, coralPoints, seafloorDEM], smallOutputFile)
+        exportlasResult0 = cc.SavePointCloud(groundPointsBase, smalllasOutputFile)
+
+
+
+
+
+
+
+
+    # Decorate main function with Gooey for GUI-based execution
 @Gooey
 def main():
     """
@@ -312,8 +403,10 @@ def main():
     """
     parser = GooeyParser(description='Process and classify point clouds.')
     parser.add_argument('directory', type=str, help='Directory containing the LAS files.', widget='DirChooser')
-    parser.add_argument('--outputDirectory', type=str, default='.', help='Directory to save the processed files.', widget='DirChooser')
+    parser.add_argument('outputDirectory', type=str, help='Directory to save the processed files.', widget='DirChooser')
     parser.add_argument('--exportOption', type=str, choices=["all", "large_output", "small_output"], default='all',
+                        help='Choose which output files to export (all, output, small_output). Default is all.')
+    parser.add_argument('--processingOption', type=str, choices=["all", "data cleaning", "aligning"], default='all',
                         help='Choose which output files to export (all, output, small_output). Default is all.')
 
     args = parser.parse_args()
@@ -321,16 +414,25 @@ def main():
     directory = args.directory
     outputDirectory = args.outputDirectory
     exportOption = args.exportOption
+    processingOption = args.processingOption
 
     fileList = os.listdir(directory)
     print("Files and directories in '", directory, "' :")
     print(fileList)
 
     # Process each LAS file in the directory
-    for file in fileList:
-        if file.endswith(".las"):
-            print("Processing file:", file)
-            cleanAndClassify(directory, file, outputDirectory, exportOption)
+    if processingOption == "all" or processingOption == "data cleaning":
+        for file in fileList:
+            if file.endswith(".las"):
+                print("Processing file:", file)
+                cleanAndClassify(directory, file, outputDirectory, exportOption)
+
+
+    # if processingOption == "all" or processingOption == "aligning":
+    #     for file in fileList:
+    #         if file.endswith(".las"):
+    #             print("Processing file:", file)
+    #             lasAlign(directory, file, outputDirectory, exportOption)
 
 
 
