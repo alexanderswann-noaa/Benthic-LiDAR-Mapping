@@ -385,7 +385,7 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
 
         smallOutputFile = os.path.join(binOutputDirectory, "SMALL" + filename[:-4] + ".bin")
         smalllasOutputFile = os.path.join(lasOutputDirectory, "SMALL" + filename[:-4] + ".las")
-        exportResult0 = cc.SaveEntities([fishPointsV1, groundPointsBase, coralPoints, seafloorDEM], smallOutputFile)
+        exportResult0 = cc.SaveEntities([originalPointCloud, fishPointsV1, groundPointsBase, coralPoints, seafloorDEM], smallOutputFile)
         exportlasResult0 = cc.SavePointCloud(groundPointsBase, smalllasOutputFile)
 
 

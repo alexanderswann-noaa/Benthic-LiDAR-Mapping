@@ -91,13 +91,16 @@ def get_image_location(filename):
 
     gps_altitude_ref = _get_if_exist(exif_data, 'GPS GPSAltitudeRef')
     gps_altitude = _get_if_exist(exif_data, 'GPS GPSAltitude')
+    print("altitude" + str(gps_altitude))
 
     if gps_altitude and gps_altitude_ref:
         alt = gps_altitude.values[0]
         altitude = alt.num / alt.den
         if gps_altitude_ref.values[0] == 1: altitude *= -1
 
+    #print("altitude" + altitude)
     return lat, lon, altitude
+
 
 def getImgUTM(filename):
     loc = get_image_location(filename)
@@ -226,7 +229,7 @@ def main():
 
     tracksDf.to_csv(os.path.join(output_base_dir, "tracks.csv"))
 
-    img_csv = False
+    img_csv = True
 
     if img_csv == True:
         for file in imgfileList:
