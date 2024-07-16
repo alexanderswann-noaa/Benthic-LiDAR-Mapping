@@ -1,4 +1,4 @@
-import argparse
+from src import *
 
 import os
 import sys
@@ -14,8 +14,8 @@ import argparse
 # os.environ["_CCTRACE_"]="ON" # only if you want C++ debug traces
 
 #from gendata import getSampleCloud, getSampleCloud2, dataDir, dataExtDir, isCoordEqual
-import CloudCompare.cloudComPy as cc
-import CloudCompare.cloudComPy.CSF
+import cloudComPy as cc
+import cloudComPy.CSF
 
 
 def octreeLevel(octree, cellSize):
@@ -310,6 +310,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
