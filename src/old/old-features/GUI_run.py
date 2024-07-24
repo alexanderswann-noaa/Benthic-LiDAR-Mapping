@@ -130,6 +130,9 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
     cleanedPointCloud, res = highZPoints.partialClone(cloudReference)
     cleanedPointCloud.setName("Cleaned Point Cloud")
 
+
+
+
     # Select octree level for fish segmentation
     octree = cleanedPointCloud.computeOctree(progressCb=None, autoAddChild=True)
     selectedOctreeLevel = octreeLevel(octree, .06)
