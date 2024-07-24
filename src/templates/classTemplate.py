@@ -107,11 +107,5 @@ def main():
 
 
 if __name__ == '__main__':
-    #
-    # main(sys.argv[1],  # Device
-    #      sys.argv[2],  # Input Path
-    #      sys.argv[3],  # Project File
-    #      sys.argv[4],  # Output Path
-    #      sys.argv[5],  # Quality
-    #      sys.argv[6])  # Target Percentage
+
     main()

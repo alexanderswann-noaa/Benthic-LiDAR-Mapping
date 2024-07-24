@@ -2,13 +2,7 @@
 # Import Funtions
 # -----------------------------------------------------------------------------------------------------------
 
-import time
-import traceback
-import argparse
-
-import numpy as np
 from gooey import Gooey, GooeyParser
-
 from classTemplate import myClass as mc
 
 
@@ -19,8 +13,6 @@ from classTemplate import myClass as mc
 # Gooey GUI
 # ----------------------------------------------------------------------------------------------------------------------
 
-
-
 @Gooey
 def main():
     """
@@ -30,8 +22,10 @@ def main():
     parser = GooeyParser(description=desc)
 
 
-    parser.add_argument('--verbose', help='be verbose', dest='verbose',
-                        action='store_true', default=False)
+    # parser.add_argument('--verbose', help='be verbose', dest='verbose',
+    #                     action='store_true', default=False)
+
+    #figure out what above line does
 
     subs = parser.add_subparsers(help='commands', dest='command')
 
@@ -52,10 +46,6 @@ def main():
     group2.add_argument('--file', type=str, default='default2', help='Directory to save the processed files.')
 
 
-
-
-
-
     args = parser.parse_args()
 
 
@@ -70,10 +60,6 @@ def main():
 
     if args.command == 'process':
         print("process")
-
-
-
-
 
 
 if __name__ == "__main__":
