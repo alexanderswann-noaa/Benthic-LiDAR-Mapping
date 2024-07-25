@@ -83,21 +83,46 @@ class segmentation:
         if isinstance(project_file, cleanCloud):
             self.input_dir = input_dir
             self.project_file = project_file
-            self.output_dir = output_dir
+            self.outputDirectory = output_dir
 
-            self.originalPointCloud = self.project_file.originalPointCloud
-            self.filteredIntensityCloud = self.project_file.filteredIntensityCloud
             self.filename = self.project_file.filename
 
+
+            self.originalPointCloud = self.project_file.originalPointCloud
+
             self.cleanedPointCloud = self.project_file.cleanedPointCloud
+
+
+
 
             self.exportOption = "small_output"
 
 
-
-
         else:
-            print(False)
+
+            self.input_dir = input_dir
+            self.outputDirectory = output_dir
+
+
+
+            self.project_file = project_file
+            #self.filename = self.project_file.filename
+
+
+            file = pathlib.Path(project_file)
+            self.filename = file.name
+
+
+            # Load the original point cloud
+            self.originalPointCloud = cc.loadPointCloud(os.path.join(self.input_dir, self.filename))
+            self.originalPointCloud.setName("Original Point Cloud")
+
+
+            self.cleanedPointCloud = self.originalPointCloud
+
+            self.exportOption = "small_output"
+
+
 
 
 
@@ -129,28 +154,15 @@ class segmentation:
         announce("Input DIR: " + self.input_dir)
 
 
-    def seg(self):
-
-        directory = self.input_dir
-        #file = pathlib.Path(self.project_file)
-        filename = self.filename
-        outputDirectory = self.output_dir
-
-        cleanedPointCloud = self.cleanedPointCloud
-        originalPointCloud = self.originalPointCloud
-        filteredIntensityCloud = self.filteredIntensityCloud
-        exportOption = self.exportOption
-
-
-
+    def segmentFish(self):
         # Select octree level for fish segmentation
-        octree = cleanedPointCloud.computeOctree(progressCb=None, autoAddChild=True)
+        octree = self.cleanedPointCloud.computeOctree(progressCb=None, autoAddChild=True)
         selectedOctreeLevel = octreeLevel(octree, .06)
 
         # Extract connected components (fish points)
         print(selectedOctreeLevel)
-        print(cleanedPointCloud)
-        extractionResult = cc.ExtractConnectedComponents(clouds=[cleanedPointCloud],
+        print(self.cleanedPointCloud)
+        extractionResult = cc.ExtractConnectedComponents(clouds=[self.cleanedPointCloud],
                                                          minComponentSize=10,
                                                          octreeLevel=selectedOctreeLevel,
                                                          randomColors=True)
@@ -160,57 +172,60 @@ class segmentation:
         allComponents = extractionResult[2] + smallComponents
 
         # Merge entities to form ground points and fish points
-        groundPointsV1 = cc.MergeEntities(allComponents, createSFcloudIndex=True)
-        groundPointsV1.setName("Ground Points: V1")
+        self.groundPointsV1 = cc.MergeEntities(allComponents, createSFcloudIndex=True)
+        self.groundPointsV1.setName("Ground Points: V1")
 
-        groundPointsBase = cc.MergeEntities(smallComponents, createSFcloudIndex=True)
-        groundPointsBase.setName("Ground Points: V1-base")
+        self.groundPointsBase = cc.MergeEntities(smallComponents, createSFcloudIndex=True)
+        self.groundPointsBase.setName("Ground Points: V1-base")
 
-        groundPointsExtra = cc.MergeEntities(extractionResult[2], createSFcloudIndex=True)
-        groundPointsExtra.setName("Ground Points: V1-extra")
+        self.groundPointsExtra = cc.MergeEntities(extractionResult[2], createSFcloudIndex=True)
+        self.groundPointsExtra.setName("Ground Points: V1-extra")
 
-        fishPointsV1 = cc.MergeEntities(extractionResult[1][1:], createSFcloudIndex=True)
+        self.fishPointsV1 = cc.MergeEntities(extractionResult[1][1:], createSFcloudIndex=True)
 
-        totalfish = len(extractionResult[1][1:])
+        self.totalfish = len(extractionResult[1][1:])
 
-        if totalfish < 1:
-            fishPointsV1 = originalPointCloud
+        if self.totalfish < 1:
+            self.fishPointsV1 = self.originalPointCloud
 
-        fishPointsV1.setName("Fish Points : V1 | " + str(
-            totalfish) + " total fish | Utilized Octree Level for fish segmentation: " + str(
+        self.fishPointsV1.setName("Fish Points : V1 | " + str(
+            self.totalfish) + " total fish | Utilized Octree Level for fish segmentation: " + str(
             selectedOctreeLevel))
-        print(str(totalfish) + " total fish")
+        print(str(self.totalfish) + " total fish")
 
         extractionResult = None
         allComponents = None
         smallComponents = None
 
+    def createDEM (self):
         # Create Digital Elevation Model (DEM) of seafloor
-        seafloorDEM = cc.RasterizeToMesh(groundPointsV1,
+        self.seafloorDEM = cc.RasterizeToMesh(self.groundPointsV1,
                                          outputRasterZ=True,
                                          gridStep=.07,
                                          emptyCellFillStrategy=cc.EmptyCellFillOption.KRIGING,
                                          projectionType=cc.ProjectionType.PROJ_MINIMUM_VALUE,
                                          outputRasterSFs=True)
-        cc.ccMesh.showSF(seafloorDEM, True)
+        cc.ccMesh.showSF(self.seafloorDEM, True)
 
+    def computeC2M(self):
         # Compute cloud to mesh distance
         numCpu = psutil.cpu_count()
-        bestOctreeLevel = cc.DistanceComputationTools.determineBestOctreeLevel(groundPointsBase, seafloorDEM)
+        bestOctreeLevel = cc.DistanceComputationTools.determineBestOctreeLevel(self.groundPointsBase, self.seafloorDEM)
         computationParams = cc.Cloud2MeshDistancesComputationParams()
         computationParams.signedDistances = True
         computationParams.maxThreadCount = numCpu
         computationParams.octreeLevel = bestOctreeLevel
 
-        cc.DistanceComputationTools.computeCloud2MeshDistances(pointCloud=groundPointsBase, mesh=seafloorDEM,
+        cc.DistanceComputationTools.computeCloud2MeshDistances(pointCloud=self.groundPointsBase, mesh=self.seafloorDEM,
                                                                params=computationParams)
 
+    def potentialCoralCloud(self):
         # Create cloud with points greater than .08m above sea floor
-        ground_points_base_dictionary = groundPointsBase.getScalarFieldDic()
-        c2mDistancesSF = groundPointsBase.getScalarField(ground_points_base_dictionary['C2M signed distances'])
-        groundPointsBase.setCurrentScalarField(ground_points_base_dictionary['C2M signed distances'])
+        ground_points_base_dictionary = self.groundPointsBase.getScalarFieldDic()
+        c2mDistancesSF = self.groundPointsBase.getScalarField(ground_points_base_dictionary['C2M signed distances'])
+        self.groundPointsBase.setCurrentScalarField(ground_points_base_dictionary['C2M signed distances'])
 
-        aboveSeaFloorCloud = cc.filterBySFValue(.08, c2mDistancesSF.getMax(), groundPointsBase)
+        aboveSeaFloorCloud = cc.filterBySFValue(.08, c2mDistancesSF.getMax(), self.groundPointsBase)
         aboveSeaFloorCloud.setName("greater than .08m above sea floor")
 
         above_sea_floor_dictionary = aboveSeaFloorCloud.getScalarFieldDic()
@@ -219,95 +234,97 @@ class segmentation:
         aboveSeaFloorCloud.setCurrentDisplayedScalarField(above_sea_floor_dictionary['C2M signed distances'])
 
         # Filter out highest intensity values
-        intensitySF2 = groundPointsBase.getScalarField(ground_points_base_dictionary['Intensity'])
-        groundPointsBase.setCurrentScalarField(ground_points_base_dictionary['Intensity'])
+        intensitySF2 = self.groundPointsBase.getScalarField(ground_points_base_dictionary['Intensity'])
+        self.groundPointsBase.setCurrentScalarField(ground_points_base_dictionary['Intensity'])
 
-        belowIntensityThresholdCloud = cc.filterBySFValue(intensitySF2.getMin(), 320, groundPointsBase)
-        belowIntensityThresholdCloud.setName("Below 320 Intensity")
+        self.belowIntensityThresholdCloud = cc.filterBySFValue(intensitySF2.getMin(), 320, self.groundPointsBase)
+        self.belowIntensityThresholdCloud.setName("Below 320 Intensity")
 
-        below_intensity_threshold_dictionary = belowIntensityThresholdCloud.getScalarFieldDic()
-        intensitySF3 = belowIntensityThresholdCloud.getScalarField(below_intensity_threshold_dictionary['Intensity'])
-        belowIntensityThresholdCloud.setCurrentScalarField(below_intensity_threshold_dictionary['Intensity'])
-        belowIntensityThresholdCloud.setCurrentDisplayedScalarField(below_intensity_threshold_dictionary['Intensity'])
+        below_intensity_threshold_dictionary = self.belowIntensityThresholdCloud.getScalarFieldDic()
+        intensitySF3 = self.belowIntensityThresholdCloud.getScalarField(below_intensity_threshold_dictionary['Intensity'])
+        self.belowIntensityThresholdCloud.setCurrentScalarField(below_intensity_threshold_dictionary['Intensity'])
+        self.belowIntensityThresholdCloud.setCurrentDisplayedScalarField(below_intensity_threshold_dictionary['Intensity'])
 
         # Combine clouds
-        possibleCoralCloud = cc.MergeEntities([aboveSeaFloorCloud, belowIntensityThresholdCloud],
+        self.possibleCoralCloud = cc.MergeEntities([aboveSeaFloorCloud, self.belowIntensityThresholdCloud],
                                               createSFcloudIndex=True)
-        possibleCoralCloud.setName("possible corals and other things above the sea floor")
+        self.possibleCoralCloud.setName("possible corals and other things above the sea floor")
 
-        combinedCloud = cc.MergeEntities([possibleCoralCloud, groundPointsBase], createSFcloudIndex=True)
-        combinedCloud.setName("everything combined")
+        self.combinedCloud = cc.MergeEntities([self.possibleCoralCloud, self.groundPointsBase], createSFcloudIndex=True)
+        self.combinedCloud.setName("everything combined")
 
+    def cleanPotentialCoralCloud(self):
         # Crop out unnecessary components
-        potential_coral_dictionary = possibleCoralCloud.getScalarFieldDic()
+        potential_coral_dictionary = self.possibleCoralCloud.getScalarFieldDic()
         # print(potential_coral_dictionary)
-        yCoordSF = possibleCoralCloud.getScalarField(potential_coral_dictionary['Coord. Y'])
-        xCoordSF = possibleCoralCloud.getScalarField(potential_coral_dictionary['Coord. X'])
-        possibleCoralCloud.setCurrentScalarField(potential_coral_dictionary['Coord. Y'])
+        self.yCoordSF = self.possibleCoralCloud.getScalarField(potential_coral_dictionary['Coord. Y'])
+        self.xCoordSF = self.possibleCoralCloud.getScalarField(potential_coral_dictionary['Coord. X'])
+        self.possibleCoralCloud.setCurrentScalarField(potential_coral_dictionary['Coord. Y'])
 
-        factor = .14 * abs((yCoordSF.getMin()) - (yCoordSF.getMax()))
-        distanceCross = abs((yCoordSF.getMin()) - (yCoordSF.getMax()))
+        factor = .14 * abs((self.yCoordSF.getMin()) - (self.yCoordSF.getMax()))
+        distanceCross = abs((self.yCoordSF.getMin()) - (self.yCoordSF.getMax()))
         print(distanceCross)
         print(factor)
-        print(yCoordSF.getMin())
-        print(yCoordSF.getMax())
+        print(self.yCoordSF.getMin())
+        print(self.yCoordSF.getMax())
         if distanceCross < 3:
             return
 
-        croppedCloud = cc.filterBySFValue(yCoordSF.getMin() + factor, yCoordSF.getMax() - factor, possibleCoralCloud)
-        croppedCloud.setName("Cropped")
+        self.croppedCloud = cc.filterBySFValue(self.yCoordSF.getMin() + factor, self.yCoordSF.getMax() - factor, self.possibleCoralCloud)
+        self.croppedCloud.setName("Cropped")
 
-        cropped_cloud_dictionary = croppedCloud.getScalarFieldDic()
+        cropped_cloud_dictionary = self.croppedCloud.getScalarFieldDic()
         print("Hello")
         print(cropped_cloud_dictionary)
-        croppedCloud.setCurrentScalarField(cropped_cloud_dictionary['Intensity'])
-        croppedCloud.setCurrentDisplayedScalarField(cropped_cloud_dictionary['Intensity'])
+        self.croppedCloud.setCurrentScalarField(cropped_cloud_dictionary['Intensity'])
+        self.croppedCloud.setCurrentDisplayedScalarField(cropped_cloud_dictionary['Intensity'])
 
+    def segCoral(self):
         # Select octree level for coral segmentation
-        cropped_cloud_octree = croppedCloud.computeOctree(progressCb=None, autoAddChild=True)
+        cropped_cloud_octree = self.croppedCloud.computeOctree(progressCb=None, autoAddChild=True)
         coralOctreeLevel = octreeLevel(cropped_cloud_octree, .02)
 
         # Extract coral points
-        coralExtractionResult = cc.ExtractConnectedComponents(clouds=[croppedCloud],
+        coralExtractionResult = cc.ExtractConnectedComponents(clouds=[self.croppedCloud],
                                                               minComponentSize=10,
                                                               octreeLevel=coralOctreeLevel,
                                                               randomColors=True,
                                                               maxNumberComponents=100000)
         # print(coralExtractionResult)
 
-        nonCoralPoints = cc.MergeEntities(coralExtractionResult[2], createSFcloudIndex=True)
-        nonCoralPoints.setName("Not Coral Points")
+        self.nonCoralPoints = cc.MergeEntities(coralExtractionResult[2], createSFcloudIndex=True)
+        self.nonCoralPoints.setName("Not Coral Points")
 
-        print("Section is " + str(yCoordSF.getMin()) + "m by " + str(yCoordSF.getMax()) + "m or " + str(
-            yCoordSF.getMax() - yCoordSF.getMin()) + "m wide")
+        print("Section is " + str(self.yCoordSF.getMin()) + "m by " + str(self.yCoordSF.getMax()) + "m or " + str(
+            self.yCoordSF.getMax() - self.yCoordSF.getMin()) + "m wide")
 
-        print("Section is " + str(xCoordSF.getMin()) + "m by " + str(xCoordSF.getMax()) + "m or " + str(
-            xCoordSF.getMax() - xCoordSF.getMin()) + "m long")
+        print("Section is " + str(self.xCoordSF.getMin()) + "m by " + str(self.xCoordSF.getMax()) + "m or " + str(
+            self.xCoordSF.getMax() - self.xCoordSF.getMin()) + "m long")
 
         print("Area of section is " + str(
-            (xCoordSF.getMax() - xCoordSF.getMin()) * (yCoordSF.getMax() - yCoordSF.getMin())) + "m^2")
+            (self.xCoordSF.getMax() - self.xCoordSF.getMin()) * (self.yCoordSF.getMax() - self.yCoordSF.getMin())) + "m^2")
 
-        combinedCoralPoints = coralExtractionResult[2] + coralExtractionResult[1]
-        allCoralAndNonCoralPoints = cc.MergeEntities(combinedCoralPoints, createSFcloudIndex=True)
-        allCoralAndNonCoralPoints.setName("All Coral + Non Coral points")
+        self.combinedCoralPoints = coralExtractionResult[2] + coralExtractionResult[1]
+        self.allCoralAndNonCoralPoints = cc.MergeEntities(self.combinedCoralPoints, createSFcloudIndex=True)
+        self.allCoralAndNonCoralPoints.setName("All Coral + Non Coral points")
 
-        lowerBound = filterLargeClouds(coralExtractionResult, 5000)
+        self.lowerBound = filterLargeClouds(coralExtractionResult, 5000)
 
-        if lowerBound == -1:
+        if self.lowerBound == -1:
             return
 
-        coralPoints = cc.MergeEntities(coralExtractionResult[1][lowerBound:], createSFcloudIndex=True)
-        coralPoints.setName("Coral Points : V1 | " + str(
+        self.coralPoints = cc.MergeEntities(coralExtractionResult[1][self.lowerBound:], createSFcloudIndex=True)
+        self.coralPoints.setName("Coral Points : V1 | " + str(
             len(coralExtractionResult[1][
-                lowerBound:])) + " total coral | Utilized Octree Level for coral segmentation: " + str(
+                self.lowerBound:])) + " total coral | Utilized Octree Level for coral segmentation: " + str(
             coralOctreeLevel))
 
-        bigCoralPoints = cc.MergeEntities(coralExtractionResult[1][:lowerBound], createSFcloudIndex=True)
+        self.bigCoralPoints = cc.MergeEntities(coralExtractionResult[1][:self.lowerBound], createSFcloudIndex=True)
 
-        if len(coralExtractionResult[1][:lowerBound]) > 1:
-            bigCoralPoints.setName("Big Coral Points : V1 | " + str(
+        if len(coralExtractionResult[1][:self.lowerBound]) > 1:
+            self.bigCoralPoints.setName("Big Coral Points : V1 | " + str(
                 len(coralExtractionResult[1][
-                    :lowerBound])) + " total coral | Utilized Octree Level for coral segmentation: " + str(
+                    :self.lowerBound])) + " total coral | Utilized Octree Level for coral segmentation: " + str(
                 coralOctreeLevel))
 
         print(str(len(coralExtractionResult[1])) + " total coral")
@@ -315,100 +332,102 @@ class segmentation:
         coralExtractionResult = None
         combinedCoralPoints = None
 
+    def export(self):
         # Export clouds and meshes
-        finalPointCloud = filteredIntensityCloud
-        cleanedPointCloud.setCurrentScalarField(0)
-        groundPointsV1.setCurrentScalarField(0)
-        fishPointsV1.setCurrentScalarField(0)
-        groundPointsExtra.setCurrentScalarField(0)
-        groundPointsBase.setCurrentScalarField(0)
 
-        scalarFieldDictionary = groundPointsBase.getScalarFieldDic()
+
+        self.cleanedPointCloud.setCurrentScalarField(0)
+        self.groundPointsV1.setCurrentScalarField(0)
+        self.fishPointsV1.setCurrentScalarField(0)
+        self.groundPointsExtra.setCurrentScalarField(0)
+        self.groundPointsBase.setCurrentScalarField(0)
+
+        scalarFieldDictionary = self.groundPointsBase.getScalarFieldDic()
         print(scalarFieldDictionary)
 
         colorScalesManager = cc.ccColorScalesManager.GetUniqueInstance()
         defaultScale = colorScalesManager.getDefaultScale(cc.DEFAULT_SCALES.HSV_360_DEG)
         highContrastScale = colorScalesManager.getDefaultScale(cc.DEFAULT_SCALES.HIGH_CONTRAST)
 
-        cleanedPointCloud.getScalarField(0).setColorScale(defaultScale)
-        groundPointsV1.getScalarField(0).setColorScale(defaultScale)
-        fishPointsV1.getScalarField(0).setColorScale(defaultScale)
-        groundPointsExtra.getScalarField(0).setColorScale(defaultScale)
-        groundPointsBase.getScalarField(0).setColorScale(defaultScale)
-        belowIntensityThresholdCloud.getScalarField(0).setColorScale(defaultScale)
-        possibleCoralCloud.getScalarField(0).setColorScale(defaultScale)
-        combinedCloud.getScalarField(0).setColorScale(defaultScale)
-        croppedCloud.getScalarField(0).setColorScale(defaultScale)
-        if exportOption == "all" or exportOption == "large_output":
-            if lowerBound > 1:
-                bigCoralPoints.getScalarField(
-                    bigCoralPoints.getScalarFieldDic()['Original cloud index']).setColorScale(highContrastScale)
-            coralPoints.getScalarField(coralPoints.getScalarFieldDic()['Original cloud index']).setColorScale(
+        self.cleanedPointCloud.getScalarField(0).setColorScale(defaultScale)
+        self.groundPointsV1.getScalarField(0).setColorScale(defaultScale)
+        self.fishPointsV1.getScalarField(0).setColorScale(defaultScale)
+        self.groundPointsExtra.getScalarField(0).setColorScale(defaultScale)
+        self.groundPointsBase.getScalarField(0).setColorScale(defaultScale)
+        self.belowIntensityThresholdCloud.getScalarField(0).setColorScale(defaultScale)
+        self.possibleCoralCloud.getScalarField(0).setColorScale(defaultScale)
+        self.combinedCloud.getScalarField(0).setColorScale(defaultScale)
+        self.croppedCloud.getScalarField(0).setColorScale(defaultScale)
+        if self.exportOption == "all" or self.exportOption == "large_output":
+            if self.lowerBound > 1:
+                self.bigCoralPoints.getScalarField(
+                    self.bigCoralPoints.getScalarFieldDic()['Original cloud index']).setColorScale(highContrastScale)
+            self.coralPoints.getScalarField(self.coralPoints.getScalarFieldDic()['Original cloud index']).setColorScale(
                 highContrastScale)
-            allCoralAndNonCoralPoints.getScalarField(0).setColorScale(defaultScale)
-            nonCoralPoints.getScalarField(0).setColorScale(defaultScale)
+            self.allCoralAndNonCoralPoints.getScalarField(0).setColorScale(defaultScale)
+            self.nonCoralPoints.getScalarField(0).setColorScale(defaultScale)
 
-            cleanedPointCloud.setCurrentDisplayedScalarField(0)
-            groundPointsV1.setCurrentDisplayedScalarField(0)
-            fishPointsV1.setCurrentDisplayedScalarField(0)
-            groundPointsExtra.setCurrentDisplayedScalarField(0)
-            groundPointsBase.setCurrentDisplayedScalarField(0)
-            possibleCoralCloud.setCurrentDisplayedScalarField(0)
-            combinedCloud.setCurrentDisplayedScalarField(0)
+            self.cleanedPointCloud.setCurrentDisplayedScalarField(0)
+            self.groundPointsV1.setCurrentDisplayedScalarField(0)
+            self.fishPointsV1.setCurrentDisplayedScalarField(0)
+            self.groundPointsExtra.setCurrentDisplayedScalarField(0)
+            self.groundPointsBase.setCurrentDisplayedScalarField(0)
+            self.possibleCoralCloud.setCurrentDisplayedScalarField(0)
+            self.combinedCloud.setCurrentDisplayedScalarField(0)
 
-            if lowerBound > 1:
-                bigCoralPoints.setCurrentDisplayedScalarField(
-                    bigCoralPoints.getScalarFieldDic()['Original cloud index'])
-            coralPoints.setCurrentDisplayedScalarField(coralPoints.getScalarFieldDic()['Original cloud index'])
-            allCoralAndNonCoralPoints.setCurrentDisplayedScalarField(0)
-            nonCoralPoints.setCurrentDisplayedScalarField(0)
+            if self.lowerBound > 1:
+                self.bigCoralPoints.setCurrentDisplayedScalarField(
+                    self.bigCoralPoints.getScalarFieldDic()['Original cloud index'])
+            self.coralPoints.setCurrentDisplayedScalarField(self.coralPoints.getScalarFieldDic()['Original cloud index'])
+            self.allCoralAndNonCoralPoints.setCurrentDisplayedScalarField(0)
+            self.nonCoralPoints.setCurrentDisplayedScalarField(0)
 
-            outputFile = os.path.join(outputDirectory, "CLEAN" + filename[:-4] + ".bin")
+            outputFile = os.path.join(self.outputDirectory, "CLEAN" + self.filename[:-4] + ".bin")
 
-            if lowerBound > 1:
+            if self.lowerBound > 1:
                 exportResult = cc.SaveEntities(
-                    [originalPointCloud, cleanedPointCloud, fishPointsV1, groundPointsV1, groundPointsExtra,
-                     groundPointsBase,
-                     aboveSeaFloorCloud, belowIntensityThresholdCloud, possibleCoralCloud, combinedCloud, croppedCloud,
-                     allCoralAndNonCoralPoints, nonCoralPoints, bigCoralPoints, coralPoints, seafloorDEM], outputFile)
+                    [self.originalPointCloud, self.cleanedPointCloud, self.fishPointsV1, self.groundPointsV1, self.groundPointsExtra,
+                     self.groundPointsBase,
+                     self.aboveSeaFloorCloud, self.belowIntensityThresholdCloud, self.possibleCoralCloud, self.combinedCloud, self.croppedCloud,
+                     self.allCoralAndNonCoralPoints, self.nonCoralPoints, self.bigCoralPoints, self.coralPoints, self.seafloorDEM], outputFile)
             else:
                 exportResult = cc.SaveEntities(
-                    [originalPointCloud, cleanedPointCloud, fishPointsV1, groundPointsV1, groundPointsExtra,
-                     groundPointsBase,
-                     aboveSeaFloorCloud, belowIntensityThresholdCloud, possibleCoralCloud, combinedCloud, croppedCloud,
-                     allCoralAndNonCoralPoints, nonCoralPoints, coralPoints, seafloorDEM], outputFile)
+                    [self.originalPointCloud, self.cleanedPointCloud, self.fishPointsV1, self.groundPointsV1, self.groundPointsExtra,
+                     self.groundPointsBase,
+                     self.aboveSeaFloorCloud, self.belowIntensityThresholdCloud, self.possibleCoralCloud, self.combinedCloud, self.croppedCloud,
+                     self.allCoralAndNonCoralPoints, self.nonCoralPoints, self.coralPoints, self.seafloorDEM], outputFile)
 
         # smallOutputDirectory = os.path.join(outputDirectory, "smallClean")
         # if not os.path.exists(smallOutputDirectory):
         #     os.makedirs(smallOutputDirectory)
-        if exportOption == "all" or exportOption == "small_output":
-            coralPoints.setCurrentDisplayedScalarField(coralPoints.getScalarFieldDic()['Original cloud index'])
-            if totalfish > 0:
-                fishPointsV1.setCurrentDisplayedScalarField(fishPointsV1.getScalarFieldDic()['Original cloud index'])
-            groundPointsBase.setCurrentDisplayedScalarField(
-                groundPointsBase.getScalarFieldDic()['C2M signed distances'])
+        if self.exportOption == "all" or self.exportOption == "small_output":
+            self.coralPoints.setCurrentDisplayedScalarField(self.coralPoints.getScalarFieldDic()['Original cloud index'])
+            if self.totalfish > 0:
+                self.fishPointsV1.setCurrentDisplayedScalarField(self.fishPointsV1.getScalarFieldDic()['Original cloud index'])
+            self.groundPointsBase.setCurrentDisplayedScalarField(
+                self.groundPointsBase.getScalarFieldDic()['C2M signed distances'])
 
-            coralPoints.getScalarField(coralPoints.getScalarFieldDic()['Original cloud index']).setColorScale(
+            self.coralPoints.getScalarField(self.coralPoints.getScalarFieldDic()['Original cloud index']).setColorScale(
                 highContrastScale)
-            if totalfish > 0:
-                fishPointsV1.getScalarField(fishPointsV1.getScalarFieldDic()['Original cloud index']).setColorScale(
+            if self.totalfish > 0:
+                self.fishPointsV1.getScalarField(self.fishPointsV1.getScalarFieldDic()['Original cloud index']).setColorScale(
                     highContrastScale)
-            groundPointsBase.getScalarField(groundPointsBase.getScalarFieldDic()['C2M signed distances']).setColorScale(
+            self.groundPointsBase.getScalarField(self.groundPointsBase.getScalarFieldDic()['C2M signed distances']).setColorScale(
                 highContrastScale)
 
-            lasOutputDirectory = os.path.join(outputDirectory, "lasFiles")
+            lasOutputDirectory = os.path.join(self.outputDirectory, "lasFiles")
             if not os.path.exists(lasOutputDirectory):
                 os.makedirs(lasOutputDirectory)
 
-            binOutputDirectory = os.path.join(outputDirectory, "binFiles")
+            binOutputDirectory = os.path.join(self.outputDirectory, "binFiles")
             if not os.path.exists(binOutputDirectory):
                 os.makedirs(binOutputDirectory)
 
-            smallOutputFile = os.path.join(binOutputDirectory, "SMALL" + filename[:-4] + ".bin")
-            smalllasOutputFile = os.path.join(lasOutputDirectory, "SMALL" + filename[:-4] + ".las")
+            smallOutputFile = os.path.join(binOutputDirectory, "SMALL" + self.filename[:-4] + ".bin")
+            smalllasOutputFile = os.path.join(lasOutputDirectory, "SMALL" + self.filename[:-4] + ".las")
             exportResult0 = cc.SaveEntities(
-                [originalPointCloud, fishPointsV1, groundPointsBase, coralPoints, seafloorDEM], smallOutputFile)
-            exportlasResult0 = cc.SavePointCloud(groundPointsBase, smalllasOutputFile)
+                [self.originalPointCloud, self.fishPointsV1, self.groundPointsBase, self.coralPoints, self.seafloorDEM], smallOutputFile)
+            exportlasResult0 = cc.SavePointCloud(self.groundPointsBase, smalllasOutputFile)
 
     def run(self):
         """
@@ -417,7 +436,13 @@ class segmentation:
         announce("Template Workflow")
         t0 = time.time()
 
-        self.seg()
+        self.segmentFish()
+        self.createDEM()
+        self.computeC2M()
+        self.potentialCoralCloud()
+        self.cleanPotentialCoralCloud()
+        self.segCoral()
+        self.export()
 
         announce("Workflow Completed")
 
@@ -429,7 +454,7 @@ def main():
     """
 
     parser = argparse.ArgumentParser(description='Process and classify point clouds.')
-    parser.add_argument('path', type=str, help='Directory containing the LAS files.')
+    parser.add_argument('--path', type=str, help='Directory containing the LAS files.')
     parser.add_argument('--output_dir', type=str, default='.', help='Directory to save the processed files.')
     parser.add_argument('--file', type=str, default='.', help='Directory to save the processed files.')
 
@@ -443,16 +468,17 @@ def main():
 
 
         #python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\classTemplate.py" "hello" --output_dir "hello again" --file "my_files yay"
-        workflow = segmentation.fromArgs(args = args)
 
-        workflow.run()
+        # workflow = segmentation.fromArgs(args = args)
+        #
+        # workflow.run()
 
 
 
 
-        workflow2 = segmentation(input_dir="input_path",
-                            project_file="project_file",
-                            output_dir="output_path")
+        workflow2 = segmentation(input_dir=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\lasFiles",
+                            project_file=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\lasFiles\SMALLprocessed_LLS_2024-03-15T054218.010100_1_3.las",
+                            output_dir=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput")
 
         workflow2.run()
 
