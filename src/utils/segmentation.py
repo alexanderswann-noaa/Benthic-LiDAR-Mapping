@@ -76,12 +76,15 @@ def filterLargeClouds(listOfClouds, maxPoints):
 # -----------------------------------------------------------------------------------------------------------
 
 class segmentation:
-    def __init__(self, input_dir, project_file, output_dir):
+    def __init__(self, project_file, output_dir):
         print("\n\n")
         announce("Start of New Object")
 
+
+
+
         if isinstance(project_file, cleanCloud):
-            self.input_dir = input_dir
+            self.input_dir = project_file.input_dir
             self.project_file = project_file
             self.outputDirectory = output_dir
 
@@ -92,15 +95,17 @@ class segmentation:
 
             self.cleanedPointCloud = self.project_file.cleanedPointCloud
 
-
-
-
             self.exportOption = "small_output"
+
+        elif os.path.isdir(project_file):
+            print("Sorry Jordan cant do that right now :(")
+            return
 
 
         else:
 
-            self.input_dir = input_dir
+
+            self.input_dir = pathlib.Path(project_file).parent
             self.outputDirectory = output_dir
 
 
@@ -131,23 +136,21 @@ class segmentation:
     @classmethod #https://www.programiz.com/python-programming/methods/built-in/classmethod
     def fromArgs(cls, args):
 
-        my_path = args.path
+        my_path = os.path.join(args.output_dir, "lasFiles")
         output_directory = args.output_dir
         file_project = args.file
 
-        return cls(input_dir=my_path,
-                               project_file=file_project,
+        return cls(project_file=file_project,
                                output_dir=output_directory)
 
     @classmethod
     def fromPrev(cls, prev, args):
 
-        my_path = args.path
+        my_path = os.path.join(args.output_dir, "lasFiles")
         output_directory = args.output_dir
         file_project = prev
 
-        return cls(input_dir=my_path,
-                   project_file=file_project,
+        return cls(project_file=file_project,
                    output_dir=output_directory)
 
     def add(self):
@@ -435,6 +438,8 @@ class segmentation:
                     """
         announce("Template Workflow")
         t0 = time.time()
+
+
 
         self.segmentFish()
         self.createDEM()

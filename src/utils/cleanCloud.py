@@ -34,22 +34,46 @@ def announce(announcement: str):
 # -----------------------------------------------------------------------------------------------------------
 
 class cleanCloud:
-    def __init__(self, input_dir, project_file, output_dir):
+    def __init__(self, project_file, output_dir):
         print("\n\n")
         announce("Start of New Object")
-        self.input_dir = input_dir
-        self.project_file = project_file
+
+        self.files = []
+        if os.path.isdir(project_file):
+            fileList = os.listdir(project_file)
+            for file in fileList:
+                if file.endswith(".las"):
+                    self.files.append(file)
+            my_input_dir = project_file
+        else:
+            self.files.append(project_file)
+            my_input_dir = pathlib.Path(project_file).parent
+
+
+
+        self.input_dir = my_input_dir
+
         self.output_dir = output_dir
 
     @classmethod  # https://www.programiz.com/python-programming/methods/built-in/classmethod
     def fromArgs(cls, args):
 
-        my_path = args.path
+        # files = []
+        # if os.path.isdir(args.file):
+        #     fileList = os.listdir(args.file)
+        #     for file in fileList:
+        #         if file.endswith(".las"):
+        #             files.append(file)
+        #     my_input_dir = args.file
+        # else:
+        #     files.append(args.file)
+        #     my_input_dir = pathlib.Path(args.file).parent
+
+
         output_directory = args.output_dir
         file_project = args.file
 
-        return cls(input_dir=my_path,
-                   project_file=file_project,
+        return cls(project_file=file_project,
                    output_dir=output_directory)
 
     def add(self):
@@ -141,7 +165,9 @@ class cleanCloud:
         announce("Template Workflow")
         t0 = time.time()
 
-        self.clean()
+        for x in self.files:
+            self.project_file = x
+            self.clean()
 
         announce("Workflow Completed")
 
@@ -154,7 +180,6 @@ def main():
     """
 
     parser = argparse.ArgumentParser(description='Process and classify point clouds.')
-    parser.add_argument('path', type=str, help='Directory containing the LAS files.')
     parser.add_argument('--output_dir', type=str, default='.', help='Directory to save the processed files.')
     parser.add_argument('--file', type=str, default='.', help='Directory to save the processed files.')
 
@@ -166,16 +191,18 @@ def main():
 
         # Run the workflow
 
-        # python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\classTemplate.py" "hello" --output_dir "hello again" --file "my_files yay"
+        # python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\cleanCloud.py" --file "C:\Users\Alexander.Swann\Desktop\testingDATA\data" --output_dir "C:\Users\Alexander.Swann\Desktop\testingDATA\newnewoutput"
+        # python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\cleanCloud.py" --file "C:\Users\Alexander.Swann\Desktop\testingDATA\data\processed_LLS_2024-03-15T051147.010100_0_1.las" --output_dir "C:\Users\Alexander.Swann\Desktop\testingDATA\newnewoutput"
         workflow = cleanCloud.fromArgs(args=args)
 
         workflow.run()
 
-        workflow2 = cleanCloud(input_dir="input_path",
-                               project_file="project_file",
-                               output_dir="output_path")
+        #workflow2 = cleanCloud(project_file=r"C:\Users\Alexander.Swann\Desktop\testingDATA\data",
+        #                       output_dir=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newnewoutput")
 
-        workflow2.run()
+        #workflow2 = cleanCloud(project_file=r"C:\Users\Alexander.Swann\Desktop\testingDATA\data\processed_LLS_2024-03-15T051147.010100_0_1.las", output_dir=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newnewoutput")
+
+        #workflow2.run()
 
         print("All Done.\n")
 
