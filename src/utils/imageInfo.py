@@ -114,53 +114,9 @@ def replace_date_colons(date_time_str):
 
 
 
-def parse_lasinfo_report(report):
-
-    min_pattern = re.compile(r'min x y z:\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)')
-    max_pattern = re.compile(r'max x y z:\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)')
 
 
-    min_match = min_pattern.search(report)
-    max_match = max_pattern.search(report)
 
-
-    if not min_match or not max_match:
-        raise ValueError("Could not find min or max x y z values in the report.")
-
-
-    min_values = list(map(float, min_match.groups()))
-    max_values = list(map(float, max_match.groups()))
-
-    return min_values, max_values
-
-def IMGsort(tracksDf, imagesDf, outputDirectory):
-    boxes_df = tracksDf
-    images_df = imagesDf
-
-    output_base_dir = outputDirectory
-    os.makedirs(output_base_dir, exist_ok=True)
-    for _, box in boxes_df.iterrows():
-        box_file_name = box['box_file_name']
-        box_dir = os.path.join(output_base_dir, box_file_name)
-
-        os.makedirs(box_dir, exist_ok=True)
-
-        shutil.copy(box['box_file_path'], os.path.join(box_dir, box_file_name))
-
-    for _, box in boxes_df.iterrows():
-        box_file_name = box['box_file_name']
-        box_dir = os.path.join(output_base_dir, box_file_name)
-
-        secsOffset = 4
-
-        images_in_box = images_df[images_df.apply(lambda img: is_within_box_Time(img['time'], box, secsOffset), axis=1)]
-
-        for _, image in images_in_box.iterrows():
-            shutil.copy(image['file_path'], os.path.join(box_dir, image['file_name']))
-    print(tracksDf)
-
-def is_within_box_Time(image_time, box, secsOffset):
-    return box['Tstart'] - secsOffset <= image_time <= box['Tend'] + secsOffset
 
 
 
@@ -231,7 +187,24 @@ def _convert_to_degress(value):
     s = float(value.values[2].num) / float(value.values[2].den)
 
     return d + (m / 60.0) + (s / 3600.0)
+def parse_lasinfo_report(report):
 
+    min_pattern = re.compile(r'min x y z:\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)')
+    max_pattern = re.compile(r'max x y z:\s+([\d\.]+)\s+([\d\.]+)\s+([\d\.]+)')
+
+
+    min_match = min_pattern.search(report)
+    max_match = max_pattern.search(report)
+
+
+    if not min_match or not max_match:
+        raise ValueError("Could not find min or max x y z values in the report.")
+
+
+    min_values = list(map(float, min_match.groups()))
+    max_values = list(map(float, max_match.groups()))
+
+    return min_values, max_values
 
 def getImgUTM(filename):
     loc = get_image_location(filename)
