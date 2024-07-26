@@ -15,6 +15,7 @@ import CloudCompare.cloudComPy.CSF
 
 from removeBadCloud import removeBadCloud as removeClds
 
+
 # -----------------------------------------------------------------------------------------------------------
 # Functions
 # -----------------------------------------------------------------------------------------------------------
@@ -26,8 +27,6 @@ def announce(announcement: str):
     print("\n###############################################")
     print(announcement)
     print("###############################################\n")
-
-
 
 
 # -----------------------------------------------------------------------------------------------------------
@@ -42,8 +41,7 @@ class cleanCloud:
         self.project_file = project_file
         self.output_dir = output_dir
 
-
-    @classmethod #https://www.programiz.com/python-programming/methods/built-in/classmethod
+    @classmethod  # https://www.programiz.com/python-programming/methods/built-in/classmethod
     def fromArgs(cls, args):
 
         my_path = args.path
@@ -51,12 +49,11 @@ class cleanCloud:
         file_project = args.file
 
         return cls(input_dir=my_path,
-                               project_file=file_project,
-                               output_dir=output_directory)
+                   project_file=file_project,
+                   output_dir=output_directory)
 
     def add(self):
         announce("Input DIR: " + self.input_dir)
-
 
     def clean(self):
         directory = self.input_dir
@@ -94,8 +91,6 @@ class cleanCloud:
         # Filter out lowest intensity values -> values below 100
         originalPointCloud.setCurrentScalarField(0)
         filteredIntensityCloud = cc.filterBySFValue(100, intensityScalarField.getMax(), originalPointCloud)
-        self.filteredIntensityCloud = filteredIntensityCloud
-
 
         y_across = abs(abs(scalarFieldY.getMin()) - abs(scalarFieldY.getMax()))
         x_across = abs(abs(scalarFieldX.getMin()) - abs(scalarFieldX.getMax()))
@@ -129,8 +124,6 @@ class cleanCloud:
 
         self.cleanedPointCloud = cleanedPointCloud
 
-
-
         lasOutputDirectory = os.path.join(outputDirectory, "lasFiles")
 
         if not os.path.exists(lasOutputDirectory):
@@ -140,7 +133,6 @@ class cleanCloud:
 
         cc.SavePointCloud(cleanedPointCloud, smalllasOutputFile)
         print("exported")
-
 
     def run(self):
         """
@@ -154,6 +146,7 @@ class cleanCloud:
         announce("Workflow Completed")
 
         print(f"NOTE: Completed in {np.around(((time.time() - t0) / 60), 2)} minutes")
+
 
 def main():
     """
@@ -173,18 +166,14 @@ def main():
 
         # Run the workflow
 
-
-        #python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\classTemplate.py" "hello" --output_dir "hello again" --file "my_files yay"
-        workflow = cleanCloud.fromArgs(args = args)
+        # python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\classTemplate.py" "hello" --output_dir "hello again" --file "my_files yay"
+        workflow = cleanCloud.fromArgs(args=args)
 
         workflow.run()
 
-
-
-
         workflow2 = cleanCloud(input_dir="input_path",
-                            project_file="project_file",
-                            output_dir="output_path")
+                               project_file="project_file",
+                               output_dir="output_path")
 
         workflow2.run()
 
@@ -195,8 +184,5 @@ def main():
         print(traceback.print_exc())
 
 
-
-
 if __name__ == '__main__':
-
     main()

@@ -44,33 +44,34 @@ def main():
 
     process_parser = subs.add_parser('process')
     group2 = process_parser.add_argument_group('processing')
-    group2.add_argument('path', type=str, default = "default2", help='Directory containing the LAS files.')
-    group2.add_argument('--output_dir', type=str, default='default2', help='Directory to save the processed files.')
-    group2.add_argument('--file', type=str, default='default2', help='Directory to save the processed files.')
-
+    group2.add_argument('path', type=str, default=r"C:\Users\Alexander.Swann\Desktop\testingDATA\data",
+                        help='Directory containing the LAS files.')
+    group2.add_argument('--output_dir', type=str, default=r'C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput',
+                        help='Directory to save the processed files.')
+    group2.add_argument('--file', type=str,
+                        default=r'C:\Users\Alexander.Swann\Desktop\testingDATA\data\processed_LLS_2024-03-15T054218.010100_1_3.las',
+                        help='Directory to save the processed files.')
 
     args = parser.parse_args()
 
 
 
-    cleanCld  = cleanCloud.fromArgs(args=args)
-    cleanCld.run()
 
-
-
-
-    segmentedCloud = seg.fromPrev(prev = cleanCld, args = args)
-    segmentedCloud.run()
 
 
 
 
 
     if args.command == 'clean':
-        print("clean")
+        cleanCld = cleanCloud.fromArgs(args=args)
+        cleanCld.run()
 
     if args.command == 'process':
-        print("process")
+        cleanCld = cleanCloud.fromArgs(args=args)
+        cleanCld.run()
+
+        segmentedCloud = seg.fromPrev(prev=cleanCld, args=args)
+        segmentedCloud.run()
 
 
 if __name__ == "__main__":
