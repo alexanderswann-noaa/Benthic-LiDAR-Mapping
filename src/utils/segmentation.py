@@ -80,13 +80,59 @@ class segmentation:
         print("\n\n")
         announce("Start of New Object")
 
+        self.files = []
+        print(project_file)
+
+
+        if isinstance(project_file, str):
+            if os.path.isdir(project_file):
+                fileList = os.listdir(project_file)
+                for file in fileList:
+                    if file.endswith(".las"):
+                        self.files.append(file)
+
+            else:
+                self.files.append(project_file)
+
+
+        elif isinstance(project_file, cleanCloud):
+            self.files.append(project_file)
+
+        self.project_file = project_file
+        self.output_dir = output_dir
+
+    @classmethod #https://www.programiz.com/python-programming/methods/built-in/classmethod
+    def fromArgs(cls, args):
+
+
+        output_directory = args.output_dir
+        file_project = args.file
+
+        return cls(project_file=file_project,
+                               output_dir=output_directory)
+
+    @classmethod
+    def fromPrev(cls, prev):
+
+
+        output_directory = prev.output_dir
+        file_project = prev
+
+        return cls(project_file=file_project,
+                   output_dir=output_directory)
 
 
 
-        if isinstance(project_file, cleanCloud):
-            self.input_dir = project_file.input_dir
-            self.project_file = project_file
-            self.outputDirectory = output_dir
+    def add(self):
+        announce("Input DIR: " + self.input_dir)
+
+
+    def setup(self):
+
+        if isinstance(self.project_file, cleanCloud):
+            self.input_dir = self.project_file.input_dir
+            self.project_file = self.project_file
+            self.outputDirectory = self.output_dir
 
             self.filename = self.project_file.filename
 
@@ -97,64 +143,49 @@ class segmentation:
 
             self.exportOption = "small_output"
 
-        elif os.path.isdir(project_file):
-            print("Sorry Jordan cant do that right now :(")
-            return
+        elif os.path.isdir(self.project_file):
 
 
-        else:
+            self.input_dir = self.project_file
+            self.outputDirectory = self.output_dir
 
+            self.project_file = self.project_file
+            # self.filename = self.project_file.filename
 
-            self.input_dir = pathlib.Path(project_file).parent
-            self.outputDirectory = output_dir
-
-
-
-            self.project_file = project_file
-            #self.filename = self.project_file.filename
-
-
-            file = pathlib.Path(project_file)
+            file = pathlib.Path(self.working_project_file)
             self.filename = file.name
-
 
             # Load the original point cloud
             self.originalPointCloud = cc.loadPointCloud(os.path.join(self.input_dir, self.filename))
             self.originalPointCloud.setName("Original Point Cloud")
-
 
             self.cleanedPointCloud = self.originalPointCloud
 
             self.exportOption = "small_output"
 
 
+        elif os.path.isfile(self.project_file):
 
 
+            self.input_dir = pathlib.Path(self.project_file).parent
+            self.outputDirectory = self.output_dir
 
+            self.project_file = self.project_file
+            #self.filename = self.project_file.filename
 
+            file = pathlib.Path(self.project_file)
+            self.filename = file.name
 
-    @classmethod #https://www.programiz.com/python-programming/methods/built-in/classmethod
-    def fromArgs(cls, args):
+            # Load the original point cloud
+            self.originalPointCloud = cc.loadPointCloud(os.path.join(self.input_dir, self.filename))
+            self.originalPointCloud.setName("Original Point Cloud")
 
-        my_path = os.path.join(args.output_dir, "lasFiles")
-        output_directory = args.output_dir
-        file_project = args.file
+            self.cleanedPointCloud = self.originalPointCloud
 
-        return cls(project_file=file_project,
-                               output_dir=output_directory)
+            self.exportOption = "small_output"
 
-    @classmethod
-    def fromPrev(cls, prev, args):
-
-        my_path = os.path.join(args.output_dir, "lasFiles")
-        output_directory = args.output_dir
-        file_project = prev
-
-        return cls(project_file=file_project,
-                   output_dir=output_directory)
-
-    def add(self):
-        announce("Input DIR: " + self.input_dir)
+        else:
+            print("Should Not Get here")
 
 
     def segmentFish(self):
@@ -440,14 +471,17 @@ class segmentation:
         t0 = time.time()
 
 
+        for x in self.files:
+            self.working_project_file = x
 
-        self.segmentFish()
-        self.createDEM()
-        self.computeC2M()
-        self.potentialCoralCloud()
-        self.cleanPotentialCoralCloud()
-        self.segCoral()
-        self.export()
+            self.setup()
+            self.segmentFish()
+            self.createDEM()
+            self.computeC2M()
+            self.potentialCoralCloud()
+            self.cleanPotentialCoralCloud()
+            self.segCoral()
+            self.export()
 
         announce("Workflow Completed")
 
@@ -459,7 +493,6 @@ def main():
     """
 
     parser = argparse.ArgumentParser(description='Process and classify point clouds.')
-    parser.add_argument('--path', type=str, help='Directory containing the LAS files.')
     parser.add_argument('--output_dir', type=str, default='.', help='Directory to save the processed files.')
     parser.add_argument('--file', type=str, default='.', help='Directory to save the processed files.')
 
@@ -473,21 +506,20 @@ def main():
 
 
         #python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\classTemplate.py" "hello" --output_dir "hello again" --file "my_files yay"
+        #python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\segmentation.py" --path "C:\Users\Alexander.Swann\Desktop\testingDATA\data" --output_dir "C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput" --img_path "C:\Users\Alexander.Swann\Desktop\testingDATA\images"
+        #python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\segmentation.py" --output_dir "C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput" --file "C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\lasFiles\SMALLprocessed_LLS_2024-03-15T054218.010100_1_4.las"
+        #python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\segmentation.py" --output_dir "C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput" --file "C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput1\lasFiles"
 
-        # workflow = segmentation.fromArgs(args = args)
+
+        workflow = segmentation.fromArgs(args = args)
+
+        workflow.run()
+
+        # workflow2 = segmentation(input_dir=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\lasFiles", project_file=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\lasFiles\SMALLprocessed_LLS_2024-03-15T054218.010100_1_3.las",output_dir=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput")
         #
-        # workflow.run()
-
-
-
-
-        workflow2 = segmentation(input_dir=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\lasFiles",
-                            project_file=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\lasFiles\SMALLprocessed_LLS_2024-03-15T054218.010100_1_3.las",
-                            output_dir=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput")
-
-        workflow2.run()
-
-        print("All Done.\n")
+        # workflow2.run()
+        #
+        # print("All Done.\n")
 
     except Exception as e:
         print(f"ERROR: {e}")

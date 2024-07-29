@@ -65,7 +65,7 @@ class processLASdir:
     @classmethod #https://www.programiz.com/python-programming/methods/built-in/classmethod
     def fromArgs(cls, args):
 
-        my_path = args.path
+        my_path = args.file
         output_directory = args.output_dir
 
 
@@ -136,7 +136,7 @@ def main():
     """
 
     parser = argparse.ArgumentParser(description='extract all of the times from specific las files.')
-    parser.add_argument('--path', type=str, help='Directory containing the LAS files.')
+    parser.add_argument('--file', type=str, help='Directory containing the LAS files.')
     parser.add_argument('--output_dir', type=str, help='Directory to save the processed files.')
 
     args = parser.parse_args()

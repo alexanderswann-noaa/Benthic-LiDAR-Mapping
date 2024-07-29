@@ -34,7 +34,7 @@ def announce(announcement: str):
 # -----------------------------------------------------------------------------------------------------------
 
 class cleanCloud:
-    def __init__(self, project_file, output_dir):
+    def __init__(self, project_file, output_dir, export):
         print("\n\n")
         announce("Start of New Object")
 
@@ -52,8 +52,9 @@ class cleanCloud:
 
 
         self.input_dir = my_input_dir
-
+        self.export = export
         self.output_dir = output_dir
+        self.good_cloud = False
 
     @classmethod  # https://www.programiz.com/python-programming/methods/built-in/classmethod
     def fromArgs(cls, args):
@@ -72,20 +73,30 @@ class cleanCloud:
 
         output_directory = args.output_dir
         file_project = args.file
+        export = args.export
 
         return cls(project_file=file_project,
-                   output_dir=output_directory)
+                   output_dir=output_directory,
+                   export = export)
 
     def add(self):
         announce("Input DIR: " + self.input_dir)
 
     def clean(self):
+
         directory = self.input_dir
         file = pathlib.Path(self.project_file)
         filename = file.name
 
         self.filename = filename
         outputDirectory = self.output_dir
+
+        print(self.export)
+
+        print(self.project_file)
+
+        print(directory)
+
         """
         Process and classify a point cloud.
 
@@ -134,6 +145,9 @@ class cleanCloud:
             # badexport = cc.SaveEntities([originalPointCloud], badoutputFile)
             badexport = cc.SavePointCloud(originalPointCloud, badoutputFile)
 
+
+            print("bad file")
+
             return
 
         # Compute CSF (Conditional Sampling Framework) plugin for filtering lowest z values
@@ -148,15 +162,21 @@ class cleanCloud:
 
         self.cleanedPointCloud = cleanedPointCloud
 
-        lasOutputDirectory = os.path.join(outputDirectory, "lasFiles")
 
-        if not os.path.exists(lasOutputDirectory):
-            os.makedirs(lasOutputDirectory)
+        print(self.export)
+        if self.export:
+            lasOutputDirectory = os.path.join(outputDirectory, "CleanedlasFiles")
 
-        smalllasOutputFile = os.path.join(lasOutputDirectory, "SMALL" + filename[:-4] + ".las")
+            if not os.path.exists(lasOutputDirectory):
+                os.makedirs(lasOutputDirectory)
 
-        cc.SavePointCloud(cleanedPointCloud, smalllasOutputFile)
-        print("exported")
+            smalllasOutputFile = os.path.join(lasOutputDirectory, "cleaned" + filename[:-4] + ".las")
+
+            cc.SavePointCloud(cleanedPointCloud, smalllasOutputFile)
+            print("exported")
+
+        print("completed")
+        self.good_cloud = True
 
     def run(self):
         """
@@ -182,6 +202,8 @@ def main():
     parser = argparse.ArgumentParser(description='Process and classify point clouds.')
     parser.add_argument('--output_dir', type=str, default='.', help='Directory to save the processed files.')
     parser.add_argument('--file', type=str, default='.', help='Directory to save the processed files.')
+    parser.add_argument('--export', type=str, default= True, help='Should the cleaned point clouds be saved to their own folder.', action = argparse.BooleanOptionalAction)
+
 
     args = parser.parse_args()
     print(args)
