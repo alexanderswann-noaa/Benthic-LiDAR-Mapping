@@ -54,8 +54,8 @@ def main():
     group2.add_argument('--output_dir', type=str, default=r'C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput',
                         help='Directory to save the processed files.', widget='DirChooser')
     group2.add_argument('--file', type=str,
-                        default=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\lasFiles\SMALLprocessed_LLS_2024-03-15T054218.010100_1_4.las",
-                        help='ONE LAS file.' , widget='DirChooser',
+                        default=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput555\CleanedlasFiles\cleanedprocessed_LLS_2024-03-15T054218.010100_1_3.las",
+                        help='Directory containing the LAS files' , widget='DirChooser',
                         metavar="las directory Path")
 
     process_parser5 = subs.add_parser('CleanANDsegment')
@@ -65,7 +65,7 @@ def main():
                         help='Directory to save the processed files.', widget='DirChooser')
     group5.add_argument('--file', type=str,
                         default=r"C:\Users\Alexander.Swann\Desktop\testingDATA\data\processed_LLS_2024-03-15T054218.010100_1_4.las",
-                        help='ONE LAS file.', widget='DirChooser',
+                        help='Directory containing the LAS files', widget='DirChooser',
                         metavar="las directory Path")
     group5.add_argument('--export',  default=False,
                         help='Should the cleaned point clouds be saved to their own folder.',

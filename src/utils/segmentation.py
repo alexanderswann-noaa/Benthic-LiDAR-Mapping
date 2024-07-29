@@ -186,6 +186,7 @@ class segmentation:
 
         else:
             print("Should Not Get here")
+            print(self.project_file)
 
 
     def segmentFish(self):
