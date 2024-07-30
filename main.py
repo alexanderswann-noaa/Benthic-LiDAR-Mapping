@@ -17,6 +17,11 @@ import CloudCompare.cloudComPy.CSF
 
 # os.environ["_CCTRACE_"]="ON" # Uncomment to enable C++ debug traces (optional)
 
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Functions
+# ----------------------------------------------------------------------------------------------------------------------
+
 # Define a function to determine octree level based on cell size
 def octreeLevel(octree, cellSize):
     """
@@ -36,6 +41,7 @@ def octreeLevel(octree, cellSize):
             print(str(octree.getCellSize(oct_elem - 1)) + " : " + str(oct_elem - 1))
             return oct_elem
 
+
 # Define a function to filter out large clouds based on point count
 def filterLargeClouds(listOfClouds, maxPoints):
     """
@@ -51,13 +57,13 @@ def filterLargeClouds(listOfClouds, maxPoints):
     if len(listOfClouds[1]) == 0:
         return -1
 
-
     for index in range(40):
         print(index)
         #print(listOfClouds)
 
         if listOfClouds[1][index].size() < maxPoints:
             return index
+
 
 # Define the main processing and classification function
 def cleanAndClassify(directory, filename, outputDirectory, exportOption):
@@ -94,8 +100,6 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
     print(filteredIntensityCloud.size())
     print(filteredIntensityCloud.size())
 
-
-
     y_across = abs(abs(scalarFieldY.getMin()) - abs(scalarFieldY.getMax()))
     x_across = abs(abs(scalarFieldX.getMin()) - abs(scalarFieldX.getMax()))
     areatot = x_across * y_across
@@ -106,7 +110,6 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
     print(areatot)
     print(ptsPermeterSquared)
 
-
     if ptsPermeterSquared < 7000 or filteredIntensityCloud.size() < 100000:
         badOutputDirectory = os.path.join(outputDirectory, "badFiles")
         if not os.path.exists(badOutputDirectory):
@@ -114,11 +117,7 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
         badoutputFile = os.path.join(badOutputDirectory, "BAD" + filename[:-4] + ".las")
         #badexport = cc.SaveEntities([originalPointCloud], badoutputFile)
         badexport = cc.SavePointCloud(originalPointCloud, badoutputFile)
-
-
         return
-
-
 
     # Compute CSF (Conditional Sampling Framework) plugin for filtering lowest z values
     clouds = cc.CSF.computeCSF(filteredIntensityCloud)
@@ -380,28 +379,34 @@ def cleanAndClassify(directory, filename, outputDirectory, exportOption):
         if not os.path.exists(binOutputDirectory):
             os.makedirs(binOutputDirectory)
 
-
-
-
         smallOutputFile = os.path.join(binOutputDirectory, "SMALL" + filename[:-4] + ".bin")
         smalllasOutputFile = os.path.join(lasOutputDirectory, "SMALL" + filename[:-4] + ".las")
         exportResult0 = cc.SaveEntities([originalPointCloud, fishPointsV1, groundPointsBase, coralPoints, seafloorDEM], smallOutputFile)
         exportlasResult0 = cc.SavePointCloud(groundPointsBase, smalllasOutputFile)
 
 
-
-
 def cleanLASdir(directory, outputDirectory, exportOption, processingOption):
-        fileList = os.listdir(directory)
-        print("Files and directories in '", directory, "' :")
-        print(fileList)
+    """
 
-        # Process each LAS file in the directory
-        if processingOption == "all" or processingOption == "data cleaning":
-            for file in fileList:
-                if file.endswith(".las"):
-                    print("Processing file:", file)
-                    cleanAndClassify(directory, file, outputDirectory, exportOption)
+    Args:
+        directory:
+        outputDirectory:
+        exportOption:
+        processingOption:
+
+    Returns:
+
+    """
+    fileList = os.listdir(directory)
+    print("Files and directories in '", directory, "' :")
+    print(fileList)
+
+    # Process each LAS file in the directory
+    if processingOption == "all" or processingOption == "data cleaning":
+        for file in fileList:
+            if file.endswith(".las"):
+                print("Processing file:", file)
+                cleanAndClassify(directory, file, outputDirectory, exportOption)
 
 
 
@@ -622,14 +627,9 @@ def IMGsort(tracksDf, imagesDf, outputDirectory):
     print(tracksDf)
 
 
-
-
-
-
-
-
-
-
+# ----------------------------------------------------------------------------------------------------------------------
+# Main
+# ----------------------------------------------------------------------------------------------------------------------
 
 @Gooey
 def main():
@@ -662,13 +662,7 @@ def main():
     group2.add_argument('outputDirectory', type=str, help='Directory to save the processed files.', widget='DirChooser')
 
 
-
-
-
-
     args = parser.parse_args()
-
-
 
     if args.command == 'clean':
         directory = args.directory
@@ -689,12 +683,5 @@ def main():
         IMGsort(tracksDf, imagesDf, outputDirectory)
 
 
-
-
-
-
 if __name__ == "__main__":
     main()
-
-
-

@@ -1,19 +1,13 @@
-# -----------------------------------------------------------------------------------------------------------
-# Import Statements
-# -----------------------------------------------------------------------------------------------------------
-
-import time
 import os
-import traceback
+import time
 import argparse
-import pathlib
+import traceback
 
 import numpy as np
 
-import CloudCompare.cloudComPy as cc
-import CloudCompare.cloudComPy.CSF
+import cloudComPy as cc
+import cloudComPy.CSF
 
-from removeBadCloud import removeBadCloud as removeClds
 
 # -----------------------------------------------------------------------------------------------------------
 # Functions
@@ -28,175 +22,182 @@ def announce(announcement: str):
     print("###############################################\n")
 
 
-
-
 # -----------------------------------------------------------------------------------------------------------
 # Classes
 # -----------------------------------------------------------------------------------------------------------
 
 class cleanCloud:
-    def __init__(self, input_dir, project_file, output_dir):
-        print("\n\n")
-        announce("Start of New Object")
-        self.input_dir = input_dir
-        self.project_file = project_file
-        self.output_dir = output_dir
+    def __init__(self,
+                 pcd_file,
+                 output_dir,
+                 intensity_thresh=100,
+                 perimeter_thresh=7000,
+                 min_point_thresh=100000,
+                 verbose=False):
 
+        # Input PCD (las) file, checks
+        self.pcd_file = pcd_file
+        self.pcd_name = os.path.basename(pcd_file)
+        assert os.path.exists(self.pcd_file), "Error: PCD file doesn't exist"
+        assert self.pcd_name.lower().endswith(".las"), "Error: PCD file is not a 'las' file"
 
-    @classmethod #https://www.programiz.com/python-programming/methods/built-in/classmethod
-    def fromArgs(cls, args):
+        # Will store the cleaned file; if bad, left as blank.
+        # Can be used by functions
+        self.output_file = ""
 
-        my_path = args.path
-        output_directory = args.output_dir
-        file_project = args.file
+        # Where all output goes
+        self.output_dir = f"{output_dir}/cleaned/lasFiles"
+        self.trash_dir = f"{output_dir}/cleaned/badFiles"
+        os.makedirs(self.output_dir, exist_ok=True)
+        os.makedirs(self.trash_dir, exist_ok=True)
 
-        return cls(input_dir=my_path,
-                               project_file=file_project,
-                               output_dir=output_directory)
+        # Various versions of PCDs
+        self.originalPointCloud = None
+        self.filteredIntensityCloud = None
+        self.cleanedPointCloud = None
 
-    def add(self):
-        announce("Input DIR: " + self.input_dir)
+        # TODO do something with this other than print? Save to disk maybe?
+        self.exportResult = None
 
+        # Threshold values for filtering
+        self.intensity_thresh = intensity_thresh
+        self.perimeter_thresh = perimeter_thresh
+        self.min_point_thresh = min_point_thresh
+
+        # Only print if True
+        self.verbose = verbose
+
+    def load_pcd(self):
+        """
+        Loads the provided PCD (LAS) file.
+        """
+        try:
+            # Load the original point cloud
+            self.originalPointCloud = cc.loadPointCloud(self.pcd_file)
+            self.originalPointCloud.setName("Original Point Cloud")
+
+        except Exception as e:
+            print(traceback.print_exc())
+            raise Exception(f"Error: Could not load PCD file.\n{e}")
 
     def clean(self):
-        directory = self.input_dir
-        file = pathlib.Path(self.project_file)
-        filename = file.name
-
-        self.filename = filename
-        outputDirectory = self.output_dir
         """
-        Process and classify a point cloud.
-
-        Args:
-        - directory (str): Directory path containing the point cloud file.
-        - filename (str): Name of the point cloud file.
-        - outputDirectory (str): Directory to save processed files.
+        Cleans the provided PCD (las) file using multiple filters;
+        outputs the clean file in sub-directory. If considered 'dirty',
+        saved to a separate trash directory.
         """
-        # Load the original point cloud
-        originalPointCloud = cc.loadPointCloud(os.path.join(directory, filename))
-        originalPointCloud.setName("Original Point Cloud")
+        t0 = time.time()
 
-        self.originalPointCloud = originalPointCloud
+        # Load the PCD from file
+        if self.originalPointCloud is None:
+            raise Exception("Error: You must use load_pcd before cleaning")
 
-        # Export coordinate to scalar fields
-        exportResult = originalPointCloud.exportCoordToSF(True, True, True)
+        if self.verbose:
+            announce(f"Cleaning {self.pcd_name}")
+
+        # Export coordinate to scalar fields (leave in case needed later)
+        self.exportResult = self.originalPointCloud.exportCoordToSF(True, True, True)
 
         # Get scalar fields
-        scalarFieldX = originalPointCloud.getScalarField(3)
-        scalarFieldY = originalPointCloud.getScalarField(4)
-        scalarFieldZ = originalPointCloud.getScalarField(5)
-        scalarFieldDictionary = originalPointCloud.getScalarFieldDic()
-        print(scalarFieldDictionary)
+        scalarFieldX = self.originalPointCloud.getScalarField(3)
+        scalarFieldY = self.originalPointCloud.getScalarField(4)
+        scalarFieldZ = self.originalPointCloud.getScalarField(5)
+        scalarFieldDictionary = self.originalPointCloud.getScalarFieldDic()
 
-        intensityScalarField = originalPointCloud.getScalarField(scalarFieldDictionary['Intensity'])
+        if self.verbose:
+            print(f"Export Result: \n {self.exportResult} \n")
+            print(f"Scalar Field Dictionary: \n {scalarFieldDictionary} \n")
 
-        # Filter out lowest intensity values -> values below 100
-        originalPointCloud.setCurrentScalarField(0)
-        filteredIntensityCloud = cc.filterBySFValue(100, intensityScalarField.getMax(), originalPointCloud)
-        self.filteredIntensityCloud = filteredIntensityCloud
+        # Calculate the intensity scalar field (shape), set to 0 by default
+        intensityScalarField = self.originalPointCloud.getScalarField(scalarFieldDictionary['Intensity'])
+        self.originalPointCloud.setCurrentScalarField(0)
 
+        # Filter out lowest intensity values -> values below 100 (default)
+        self.filteredIntensityCloud = cc.filterBySFValue(self.intensity_thresh,
+                                                         intensityScalarField.getMax(),
+                                                         self.originalPointCloud)
 
+        # Calculate the shape of the point cloud
         y_across = abs(abs(scalarFieldY.getMin()) - abs(scalarFieldY.getMax()))
         x_across = abs(abs(scalarFieldX.getMin()) - abs(scalarFieldX.getMax()))
-        areatot = x_across * y_across
-        ptsPermeterSquared = filteredIntensityCloud.size() / areatot
+        area_total = x_across * y_across
+        pts_per_squared = self.filteredIntensityCloud.size() / area_total
 
-        print(y_across)
-        print(x_across)
-        print(areatot)
-        print(ptsPermeterSquared)
+        if self.verbose:
+            print(f"Y Across: {y_across}")
+            print(f"X Across: {x_across}")
+            print(f"Area Total: {area_total}")
+            print(f"Points Perimeter (^2): {pts_per_squared}")
 
-        if ptsPermeterSquared < 7000 or filteredIntensityCloud.size() < 100000:
-            badOutputDirectory = os.path.join(outputDirectory, "badFiles")
-            if not os.path.exists(badOutputDirectory):
-                os.makedirs(badOutputDirectory)
-            badoutputFile = os.path.join(badOutputDirectory, "BAD" + filename[:-4] + ".las")
-            # badexport = cc.SaveEntities([originalPointCloud], badoutputFile)
-            badexport = cc.SavePointCloud(originalPointCloud, badoutputFile)
-
+        if pts_per_squared < self.perimeter_thresh or self.filteredIntensityCloud.size() < self.min_point_thresh:
+            # If the modified point cloud is too small, save it to trash folder
+            trash_file = f"{self.trash_dir}/BAD_{self.pcd_name}"
+            cc.SavePointCloud(self.originalPointCloud, trash_file)
+            print(f"Warning: PCD file is considered bad, output as {os.path.basename(trash_file)}")
             return
 
         # Compute CSF (Conditional Sampling Framework) plugin for filtering lowest z values
-        clouds = cc.CSF.computeCSF(filteredIntensityCloud)
-        lowZPoints = clouds[0]
-        highZPoints = clouds[1]
+        clouds = cc.CSF.computeCSF(self.filteredIntensityCloud)
+        lowZPoints, highZPoints = clouds[0:2]
 
-        # Remove statistical outliers using SOR filter
+        # Remove statistical outliers using SOR filter, update cleaned point cloud
         cloudReference = cc.CloudSamplingTools.sorFilter(knn=6, nSigma=10, cloud=highZPoints)
-        cleanedPointCloud, res = highZPoints.partialClone(cloudReference)
-        cleanedPointCloud.setName("Cleaned Point Cloud")
+        self.cleanedPointCloud, res = highZPoints.partialClone(cloudReference)
+        self.cleanedPointCloud.setName("Cleaned Point Cloud")
 
-        self.cleanedPointCloud = cleanedPointCloud
+        self.output_file = f"{self.output_dir}/SMALL_{self.pcd_name}"
+        cc.SavePointCloud(self.cleanedPointCloud, self.output_file)
+        print(f"Exported {os.path.basename(self.output_file)}")
 
-
-
-        lasOutputDirectory = os.path.join(outputDirectory, "lasFiles")
-
-        if not os.path.exists(lasOutputDirectory):
-            os.makedirs(lasOutputDirectory)
-
-        smalllasOutputFile = os.path.join(lasOutputDirectory, "SMALL" + filename[:-4] + ".las")
-
-        cc.SavePointCloud(cleanedPointCloud, smalllasOutputFile)
-        print("exported")
+        print(f"Completed in {np.around(((time.time() - t0) / 60), 2)} minutes")
 
 
-    def run(self):
-        """
-
-                    """
-        announce("Template Workflow")
-        t0 = time.time()
-
-        self.clean()
-
-        announce("Workflow Completed")
-
-        print(f"NOTE: Completed in {np.around(((time.time() - t0) / 60), 2)} minutes")
+# ----------------------------------------------------------------------------------------------------------------------
+# Main
+# ----------------------------------------------------------------------------------------------------------------------
 
 def main():
     """
 
     """
-
     parser = argparse.ArgumentParser(description='Process and classify point clouds.')
-    parser.add_argument('path', type=str, help='Directory containing the LAS files.')
-    parser.add_argument('--output_dir', type=str, default='.', help='Directory to save the processed files.')
-    parser.add_argument('--file', type=str, default='.', help='Directory to save the processed files.')
+
+    parser.add_argument('--pcd_file', type=str, required=True,
+                        help='Path to point cloud file (las).')
+
+    parser.add_argument('--output_dir', type=str, default="./output",
+                        help='Directory to save the processed files.')
+
+    parser.add_argument('--intensity_thresh', type=int, default=100,
+                        help='Threshold for point perimeter squared.')
+
+    parser.add_argument('--perimeter_thresh', type=int, default=7000,
+                        help='Threshold for point perimeter squared.')
+
+    parser.add_argument('--min_point_thresh', type=int, default=100000,
+                        help='Minimum points threshold.')
+
+    parser.add_argument('--verbose', action='store_true',
+                        help='Print to console.')
 
     args = parser.parse_args()
-    print(args)
-    print(type(args))
 
     try:
-
-        # Run the workflow
-
-
-        #python "C:\Users\Alexander.Swann\PycharmProjects\pythonProject\src\classTemplate.py" "hello" --output_dir "hello again" --file "my_files yay"
-        workflow = cleanCloud.fromArgs(args = args)
-
-        workflow.run()
-
-
-
-
-        workflow2 = cleanCloud(input_dir="input_path",
-                            project_file="project_file",
-                            output_dir="output_path")
-
-        workflow2.run()
-
-        print("All Done.\n")
+        # Create a cleanCloud instance
+        cloud_cleaner = cleanCloud(pcd_file=args.pcd_file,
+                                   output_dir=args.output_dir,
+                                   intensity_thresh=args.intensity_thresh,
+                                   perimeter_thresh=args.perimeter_thresh,
+                                   min_point_thresh=args.min_point_thresh,
+                                   verbose=args.verbose)
+        # Clean the cloud
+        cloud_cleaner.clean()
+        print("Done.")
 
     except Exception as e:
         print(f"ERROR: {e}")
         print(traceback.print_exc())
 
 
-
-
 if __name__ == '__main__':
-
     main()

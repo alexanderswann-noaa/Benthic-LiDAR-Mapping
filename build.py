@@ -2,6 +2,7 @@ import os
 import sys
 import py7zr
 
+
 def extract_7z(archive_path, extract_path):
     """
     Used to extract the contents of a .7z file in the provided directory

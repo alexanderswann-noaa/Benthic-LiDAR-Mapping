@@ -1,15 +1,10 @@
-# -----------------------------------------------------------------------------------------------------------
-# Import Statements
-# -----------------------------------------------------------------------------------------------------------
+import os
+import traceback
 
 from gooey import Gooey, GooeyParser
 
-from cleanCloud import cleanCloud as cleanCloud
-
-from segmentation import segmentation as seg
-
-
-
+from cleanCloud import cleanCloud
+from segmentCloud import segmentCloud
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -21,56 +16,77 @@ def main():
     """
     Main function to parse arguments and initiate processing.
     """
-    desc = 'Process and classify point clouds.'
-    parser = GooeyParser(description=desc)
-
-
-    # parser.add_argument('--verbose', help='be verbose', dest='verbose',
-    #                     action='store_true', default=False)
-
-    #figure out what above line does
-
+    parser = GooeyParser(description='Process and classify point clouds.')
     subs = parser.add_subparsers(help='commands', dest='command')
 
-#____
-    clean_parser = subs.add_parser('clean')
-    group1 = clean_parser.add_argument_group('General')
-    group1.add_argument('path', type=str, default = r"C:\Users\Alexander.Swann\Desktop\testingDATA\data", help='Directory containing the LAS files.')
-    group1.add_argument('--output_dir', type=str, default= r'C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput', help='Directory to save the processed files.')
-    group1.add_argument('--file', type=str, default= r'C:\Users\Alexander.Swann\Desktop\testingDATA\data\processed_LLS_2024-03-15T054218.010100_1_3.las', help='Directory to save the processed files.')
+    # Clean parser
+    clean_parser = subs.add_parser('Clean')
 
+    clean_parser_panel_1 = clean_parser.add_argument_group('Clean',
+                                                           'Provide a path to LAS file to clean.')
 
+    clean_parser_panel_1.add_argument('--pcd_file', type=str, required=True,
+                                      metavar='Point Cloud (LAS)',
+                                      help='Path to point cloud LAS file.',
+                                      widget='FileChooser')
 
+    clean_parser_panel_1.add_argument('--output_dir', type=str,
+                                      default=f"{os.path.dirname(os.path.abspath(__file__))}/data/processed",
+                                      help='Directory to save the processed files.')
 
-    process_parser = subs.add_parser('process')
-    group2 = process_parser.add_argument_group('processing')
-    group2.add_argument('path', type=str, default = "default2", help='Directory containing the LAS files.')
-    group2.add_argument('--output_dir', type=str, default='default2', help='Directory to save the processed files.')
-    group2.add_argument('--file', type=str, default='default2', help='Directory to save the processed files.')
+    # TODO add all parameterized arguments here
+    # Segment parser
+    segment_parser = subs.add_parser('Segment')
 
+    segment_parser_panel_1 = segment_parser.add_argument_group('Segment',
+                                                               'Provide a path to LAS file to segment.')
+
+    segment_parser_panel_1.add_argument('--pcd_file', type=str, required=True,
+                                        metavar='Point Cloud (LAS)',
+                                        help='Path to point cloud LAS file.',
+                                        widget='FileChooser')
+
+    segment_parser_panel_1.add_argument('--output_dir', type=str,
+                                        default=f"{os.path.dirname(os.path.abspath(__file__))}/data/processed",
+                                        help='Directory to save the processed files.')
 
     args = parser.parse_args()
 
+    try:
+        if args.command == 'Clean':
+            # Create a cleanCloud instance
+            cloud_cleaner = cleanCloud(pcd_file=args.pcd_file,
+                                       output_dir=args.output_dir,
+                                       intensity_thresh=args.intensity_thresh,
+                                       perimeter_thresh=args.perimeter_thresh,
+                                       min_point_thresh=args.min_point_thresh,
+                                       verbose=args.verbose)
 
+            # Load the cloud from file
+            cloud_cleaner.load_pcd()
 
-    cleanCld  = cleanCloud.fromArgs(args=args)
-    cleanCld.run()
+            # Clean the cloud
+            cloud_cleaner.clean()
 
+        # TODO add all parameterized arguments here
+        elif args.command == 'Segment':
+            # Create a segmentCloud instance
+            cloud_segmentor = segmentCloud(pcd_file=args.pcd_file,
+                                           output_dir=args.output_dir,
 
+                                           verbose=args.verbose)
 
+            # Load the cleaned cloud from file
+            cloud_segmentor.load_pcd()
 
-    segmentedCloud = seg.fromPrev(prev = cleanCld, args = args)
-    segmentedCloud.run()
+            # Segment the cloud
+            cloud_segmentor.segment()
 
+        print("Done.")
 
-
-
-
-    if args.command == 'clean':
-        print("clean")
-
-    if args.command == 'process':
-        print("process")
+    except Exception as e:
+        print(f"ERROR: {e}")
+        print(traceback.print_exc())
 
 
 if __name__ == "__main__":
