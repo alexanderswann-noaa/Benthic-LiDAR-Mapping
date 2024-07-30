@@ -118,6 +118,7 @@ class cleanCloud:
             print(f"Area Total: {area_total}")
             print(f"Points Perimeter (^2): {pts_per_squared}")
 
+        # TODO add exportResult output?
         if pts_per_squared < self.perimeter_thresh or self.filteredIntensityCloud.size() < self.min_point_thresh:
             # If the modified point cloud is too small, save it to trash folder
             trash_file = f"{self.trash_dir}/BAD_{self.pcd_name}"
@@ -129,11 +130,13 @@ class cleanCloud:
         clouds = cc.CSF.computeCSF(self.filteredIntensityCloud)
         lowZPoints, highZPoints = clouds[0:2]
 
+        # TODO make knn and (maybe) nSigma parameterized
         # Remove statistical outliers using SOR filter, update cleaned point cloud
         cloudReference = cc.CloudSamplingTools.sorFilter(knn=6, nSigma=10, cloud=highZPoints)
         self.cleanedPointCloud, res = highZPoints.partialClone(cloudReference)
         self.cleanedPointCloud.setName("Cleaned Point Cloud")
 
+        # TODO add exportResult output?
         self.output_file = f"{self.output_dir}/SMALL_{self.pcd_name}"
         cc.SavePointCloud(self.cleanedPointCloud, self.output_file)
         print(f"Exported {os.path.basename(self.output_file)}")
@@ -154,7 +157,7 @@ def main():
     parser.add_argument('--pcd_file', type=str, required=True,
                         help='Path to point cloud file (las).')
 
-    parser.add_argument('--output_dir', type=str, default="./output",
+    parser.add_argument('--output_dir', type=str, default="./data/processed",
                         help='Directory to save the processed files.')
 
     parser.add_argument('--intensity_thresh', type=int, default=100,
@@ -179,6 +182,10 @@ def main():
                                    perimeter_thresh=args.perimeter_thresh,
                                    min_point_thresh=args.min_point_thresh,
                                    verbose=args.verbose)
+
+        # Load point cloud
+        cloud_cleaner.load_pcd()
+
         # Clean the cloud
         cloud_cleaner.clean()
         print("Done.")

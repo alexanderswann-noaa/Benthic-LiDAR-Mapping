@@ -19,10 +19,11 @@ def main():
     parser = GooeyParser(description='Process and classify point clouds.')
     subs = parser.add_subparsers(help='commands', dest='command')
 
+    # TODO add all the other parameters!
     # Clean parser
-    clean_parser = subs.add_parser('Clean')
+    clean_parser = subs.add_parser('Clean File')
 
-    clean_parser_panel_1 = clean_parser.add_argument_group('Clean',
+    clean_parser_panel_1 = clean_parser.add_argument_group('Clean File',
                                                            'Provide a path to LAS file to clean.')
 
     clean_parser_panel_1.add_argument('--pcd_file', type=str, required=True,
@@ -31,8 +32,10 @@ def main():
                                       widget='FileChooser')
 
     clean_parser_panel_1.add_argument('--output_dir', type=str,
+                                      metavar="Output Directory",
                                       default=f"{os.path.dirname(os.path.abspath(__file__))}/data/processed",
-                                      help='Directory to save the processed files.')
+                                      help='Directory to save the processed files.',
+                                      widget='DirChooser')
 
     # TODO add all parameterized arguments here
     # Segment parser
@@ -47,13 +50,14 @@ def main():
                                         widget='FileChooser')
 
     segment_parser_panel_1.add_argument('--output_dir', type=str,
+                                        metavar="Output Directory",
                                         default=f"{os.path.dirname(os.path.abspath(__file__))}/data/processed",
                                         help='Directory to save the processed files.')
 
     args = parser.parse_args()
 
     try:
-        if args.command == 'Clean':
+        if args.command == 'Clean File':
             # Create a cleanCloud instance
             cloud_cleaner = cleanCloud(pcd_file=args.pcd_file,
                                        output_dir=args.output_dir,

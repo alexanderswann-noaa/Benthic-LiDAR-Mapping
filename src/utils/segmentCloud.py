@@ -65,7 +65,8 @@ def filterLargeClouds(listOfClouds, maxPoints):
 # -----------------------------------------------------------------------------------------------------------
 
 class segmentCloud:
-    def __init__(self, pcd_file,
+    def __init__(self,
+                 pcd_file,
                  output_dir,
                  dem_grid_step=.07,
                  pcd_above_seafloor_thresh=0.08,
@@ -74,6 +75,8 @@ class segmentCloud:
                  fish_cell_size=0.06,
                  min_comp_size=10,
                  verbose=False):
+        # TODO
+        # export_option
         # Add params wherever applicable, so others can adjust.
         # If you have reason to believe that some of these should NOT be changed,
         # that's totally fine that it's not a parameterized value and stays fixed.
@@ -96,7 +99,7 @@ class segmentCloud:
         os.makedirs(self.lasOutputDirectory, exist_ok=True)
         os.makedirs(self.binOutputDirectory, exist_ok=True)
 
-        self.exportOption = "small_output"
+        self.exportOption = export_option
         self.originalPointCloud = None
         self.cleanedPointCloud = None
 
@@ -170,20 +173,6 @@ class segmentCloud:
         if None in [self.originalPointCloud, self.cleanedPointCloud]:
             raise Exception("Error: PCD file is empty")
 
-    def extractPointCloudComponents(self):
-        """
-        This function extracts connected components from the original pcd; these components
-        correspond to ... .... ...
-
-        Additionally specifying a cell size, we can identify which points in the extracted
-        components are likely fish.
-        """
-        pass
-
-    # TODO
-    # Consider breaking this up into two functions: one that is used to into components
-    # (which assigns all the groundPoints) and records the self.extractionResults. The other
-    # will using the extraction results and create the fishPoints
     def segmentFish(self):
         """
         This function segments fish by...
@@ -271,7 +260,6 @@ class segmentCloud:
     def potentialCoralCloud(self):
         """
 
-        Returns:
 
         """
         # Create cloud with points greater than above sea floor (0.08 default)
@@ -337,6 +325,7 @@ class segmentCloud:
                                                self.yCoordSF.getMax() - factor,
                                                self.possibleCoralCloud)
 
+        # TODO What is a cropped cloud?
         cropped_cloud_dictionary = self.croppedCloud.getScalarFieldDic()
         self.croppedCloud.setCurrentScalarField(cropped_cloud_dictionary['Intensity'])
         self.croppedCloud.setCurrentDisplayedScalarField(cropped_cloud_dictionary['Intensity'])
@@ -346,6 +335,11 @@ class segmentCloud:
         """
 
         """
+        # TODO figure out what to do in this situation
+        if self.croppedCloud is None:
+            print()
+            return
+
         # Select octree level for coral segmentation
         cropped_cloud_octree = self.croppedCloud.computeOctree(progressCb=None, autoAddChild=True)
         coralOctreeLevel = octreeLevel(cropped_cloud_octree, self.coral_cell_size)
@@ -464,9 +458,6 @@ class segmentCloud:
             index = self.coralPoints.getScalarFieldDic()['Original cloud index']
             self.coralPoints.setCurrentDisplayedScalarField(index)
 
-            # The final output file?...
-            self.output_file = f"{self.output_dir}/CLEAN_{self.pcd_basename}.bin"
-
             # List of entities to export
             entities_to_export = [
                 self.originalPointCloud,
@@ -489,6 +480,9 @@ class segmentCloud:
             # Add bigCoralPoints if lowerBound > 1
             if self.lowerBound > 1:
                 entities_to_export.append(self.bigCoralPoints)
+
+            # The final output file?...
+            self.output_file = f"{self.output_dir}/CLEAN_{self.pcd_basename}.bin"
 
             # TODO is this needed?
             # Export entities
@@ -557,7 +551,7 @@ def main():
     parser.add_argument('--pcd_file', type=str, required=True,
                         help='Path to point cloud file (las).')
 
-    parser.add_argument('--output_dir', type=str, default="./output",
+    parser.add_argument('--output_dir', type=str, default="./data/processed",
                         help='Directory to save the processed files.')
 
     parser.add_argument('--verbose', action='store_true',
@@ -571,8 +565,13 @@ def main():
         cloud_segmentor = segmentCloud(pcd_file=args.pcd_file,
                                        output_dir=args.output_dir,
                                        verbose=args.verbose)
+
+        # Load the cloud
+        cloud_segmentor.load_pcd()
+
         # Segment the cloud
         cloud_segmentor.segment()
+
         print("Done.\n")
 
     except Exception as e:
