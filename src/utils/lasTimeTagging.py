@@ -136,7 +136,7 @@ def main():
     """
 
     parser = argparse.ArgumentParser(description='extract all of the times from specific las files.')
-    parser.add_argument('--file', type=str, help='Directory containing the LAS files.')
+    parser.add_argument('--pcd_dir', type=str, help='Directory containing the LAS files.')
     parser.add_argument('--output_dir', type=str, help='Directory to save the processed files.')
 
     args = parser.parse_args()
