@@ -25,10 +25,10 @@ class cleanCloud:
                  intensity_thresh=100,
                  density_thresh=7000,
                  min_point_thresh=100000,
-                 knn = 6,
-                 nSigma = 10,
+                 knn=6,
+                 nSigma=10,
                  verbose=False,
-                 export = True):
+                 export=True):
 
         # Input PCD (las) file, checks
         self.pcd_file = pcd_file
@@ -51,7 +51,6 @@ class cleanCloud:
         self.filteredIntensityCloud = None
         self.cleanedPointCloud = None
 
-
         self.SF_export = None
 
         # Threshold values for filtering
@@ -63,7 +62,7 @@ class cleanCloud:
         self.knn = knn
         self.nSigma = nSigma
 
-        #Should the cleaned las Files be Exported
+        # Should the cleaned las Files be Exported
         self.export_result = export
 
         # Only print if True
@@ -131,7 +130,6 @@ class cleanCloud:
             print(f"Area Total: {area_total}")
             print(f"Points Perimeter (^2): {pts_per_squared}")
 
-
         if pts_per_squared < self.perimeter_thresh or self.filteredIntensityCloud.size() < self.min_point_thresh:
             # If the modified point cloud is too small, save it to trash folder
             trash_file = f"{self.trash_dir}/BAD_{self.pcd_name}"
@@ -143,15 +141,14 @@ class cleanCloud:
         clouds = cc.CSF.computeCSF(self.filteredIntensityCloud)
         lowZPoints, highZPoints = clouds[0:2]
 
-        # TODO make knn and (maybe) nSigma parameterized
         # Remove statistical outliers using SOR filter, update cleaned point cloud
-        #https://www.simulation.openfields.fr/documentation/CloudComPy/html/cloudSamplingTools.html#cloudComPy.CloudSamplingTools.sorFilter
+        # https://www.simulation.openfields.fr/documentation/CloudComPy/html/cloudSamplingTools.html#cloudComPy.CloudSamplingTools.sorFilter
         cloudReference = cc.CloudSamplingTools.sorFilter(knn=self.knn, nSigma=self.nSigma, cloud=highZPoints)
         self.cleanedPointCloud, res = highZPoints.partialClone(cloudReference)
         self.cleanedPointCloud.setName("Cleaned Point Cloud")
 
         if self.export_result:
-            self.output_file = f"{self.output_dir}/SMALL_{self.pcd_name}"
+            self.output_file = f"{self.output_dir}/CLEAN_{self.pcd_name}"
             cc.SavePointCloud(self.cleanedPointCloud, self.output_file)
             print(f"Exported {os.path.basename(self.output_file)}")
 
@@ -181,23 +178,22 @@ def main():
                         help='Threshold for points per meter squared.')
 
     parser.add_argument('--min_point_thresh', type=float, default=100000,
-                        help='Minimum points threshold.')
+                        help='Minimum Points Threshold.')
     parser.add_argument('--knn', type=int, required=False,
-                  default=6,
-                  metavar='K Nearest Neighbors',
-                  help='number of neighbors (must be an int)')
+                        default=6,
+                        metavar='K Nearest Neighbors',
+                        help='number of neighbors (must be an int)')
 
     parser.add_argument('--nSigma', type=float, required=False,
-                                      default=10,
-                                      help='number of sigmas under which the points should be kept')
-
+                        default=10,
+                        help='The number of sigmas under which the points should be kept')
 
     parser.add_argument('--verbose', action='store_true',
-                        help='Print to console.')
+                        help='Print information to console.')
 
     parser.add_argument('--export', default=True,
-                                        help='Should the cleaned point clouds be saved to their own folder.',
-                                        action='store_true')
+                        help='Should the cleaned point clouds be saved to their own folder.',
+                        action='store_true')
 
     args = parser.parse_args()
 
@@ -213,9 +209,6 @@ def main():
                                    nSigma=args.nSigma,
                                    verbose=args.verbose,
                                    export=args.export)
-
-        # cloud_cleaner = cleanCloud(pcd_file=r"C:\Users\Alexander.Swann\Desktop\testingDATA\data\processed_LLS_2024-03-15T054218.010100_1_3.las",
-        #                        output_dir=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newnewoutput21")
 
         # Load point cloud
         cloud_cleaner.load_pcd()

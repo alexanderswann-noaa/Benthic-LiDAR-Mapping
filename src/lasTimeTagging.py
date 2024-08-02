@@ -89,7 +89,8 @@ class processLASdir:
             if file.endswith(".las"):
                 print("Processing file:", file)
 
-                lasinfo = r"C:\Users\Alexander.Swann\.conda\envs\CloudComPy310\pkgs\lastools-20171231-h0e60522_1002\Library\bin\lasinfo.exe"
+                lasinfo = r".\build\lasinfo.exe"
+                print(lasinfo)
                 lasinfo_report = getLasInfo(lasinfo, (os.path.join(directory, file)))
 
                 # print(lasinfo_report)

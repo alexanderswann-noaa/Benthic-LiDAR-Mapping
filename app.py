@@ -4,16 +4,16 @@ import glob
 
 from gooey import Gooey, GooeyParser
 
-from cleanCloud import cleanCloud
-from cleanClouds import cleanClouds
-from segmentCloud import segmentCloud
-from segmentClouds import segmentClouds
+from src.cleanCloud import cleanCloud
+from src.cleanClouds import cleanClouds
+from src.segmentCloud import segmentCloud
+from src.segmentClouds import segmentClouds
 
-from lasTimeTagging import processLASdir as lasProcess
+from src.lasTimeTagging import processLASdir as lasProcess
 
-from imageTimeTagging import processIMGdir as imgProcess
+from src.imageTimeTagging import processIMGdir as imgProcess
 
-from imageTimeSort import IMGsort as IMGsort
+from src.imageTimeSort import IMGsort as IMGsort
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -258,69 +258,69 @@ def main():
                                             widget='DirChooser')
 
     segment_dir_parser_panel_2 = segment_dir_parser.add_argument_group('Optional Arguments for Segmenting Corals',
-                                                               'Provide a path to LAS file to clean.')
+                                                                       'Provide a path to LAS file to clean.')
 
     segment_dir_parser_panel_2.add_argument('--pcd_above_seafloor_thresh', type=float, required=False,
-                                        default=0.08,
-                                        metavar='Meters Above Sea Floor Threshold',
-                                        help='Points above this Value will be added to the Potential Coral Cloud that is used later to identify corals.')
+                                            default=0.08,
+                                            metavar='Meters Above Sea Floor Threshold',
+                                            help='Points above this Value will be added to the Potential Coral Cloud that is used later to identify corals.')
 
     segment_dir_parser_panel_2.add_argument('--intensity_threshold', type=float, required=False,
-                                        default=320,
-                                        metavar='Intensity Threshold',
-                                        help='Points below this intensity value will be added to the Potential Coral Cloud that is used later to identify corals.')
+                                            default=320,
+                                            metavar='Intensity Threshold',
+                                            help='Points below this intensity value will be added to the Potential Coral Cloud that is used later to identify corals.')
 
     segment_dir_parser_panel_2.add_argument('--coral_cell_size', type=float, required=False,
-                                        default=0.02,
-                                        metavar='Coral Cell Size',
-                                        help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Corals.')
+                                            default=0.02,
+                                            metavar='Coral Cell Size',
+                                            help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Corals.')
     segment_dir_parser_panel_2.add_argument('--coral_min_comp_size', type=int, required=False,
-                                        default=10,
-                                        metavar='Minimum Coral Size',
-                                        help='The smallest number of grouped points that will be classified as coral.')
+                                            default=10,
+                                            metavar='Minimum Coral Size',
+                                            help='The smallest number of grouped points that will be classified as coral.')
 
     segment_dir_parser_panel_2.add_argument('--max_coral_pts', type=float, required=False,
-                                        default=5000,
-                                        metavar='Maximum Coral Size',
-                                        help='The largest number of grouped points that will be classified as coral.')
+                                            default=5000,
+                                            metavar='Maximum Coral Size',
+                                            help='The largest number of grouped points that will be classified as coral.')
 
     segment_dir_parser_panel_3 = segment_dir_parser.add_argument_group('Optional Arguments for Segmenting Fish',
-                                                               'Provide a path to LAS file to clean.')
+                                                                       'Provide a path to LAS file to clean.')
     segment_dir_parser_panel_3.add_argument('--fish_cell_size', type=float, required=False,
-                                        default=0.06,
-                                        metavar='Fish Cell Size',
-                                        help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Fish.')
+                                            default=0.06,
+                                            metavar='Fish Cell Size',
+                                            help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Fish.')
     segment_dir_parser_panel_3.add_argument('--fish_min_comp_size', type=int, required=False,
-                                        default=10,
-                                        metavar='Minimum Fish Size',
-                                        help='The smallest number of grouped points that will be classified as fish.')
+                                            default=10,
+                                            metavar='Minimum Fish Size',
+                                            help='The smallest number of grouped points that will be classified as fish.')
 
     segment_dir_parser_panel_4 = segment_dir_parser.add_argument_group('Optional Arguments for Creating DEM',
-                                                               'Provide a path to LAS file to clean.')
+                                                                       'Provide a path to LAS file to clean.')
 
     segment_dir_parser_panel_4.add_argument('--dem_grid_step', type=float, required=False,
-                                        default=.07,
-                                        metavar='Grid Step for DEM',
-                                        help='The Grid step used to create the DEM.')
+                                            default=.07,
+                                            metavar='Grid Step for DEM',
+                                            help='The Grid step used to create the DEM.')
 
     # not working rn cant figure out how to add the choice to the end of the variable name
     segment_dir_parser_panel_4.add_argument('--empty_cell_fill_option', type=str, required=False,
-                                        default="KRIGING",
-                                        metavar='Empty cell fill Ooption for DEM',
-                                        help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
+                                            default="KRIGING",
+                                            metavar='Empty cell fill Ooption for DEM',
+                                            help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
 
     segment_dir_parser_panel_5 = segment_dir_parser.add_argument_group('Other Optional Arguments',
-                                                               'Provide a path to LAS file to clean.')
+                                                                       'Provide a path to LAS file to clean.')
 
     segment_dir_parser_panel_5.add_argument('--exportOption', type=str, required=False,
-                                        default="small_output",
-                                        metavar='Export Option',
-                                        help='What should be outputed? Options are "small_output", "large_output", "all" ')
+                                            default="small_output",
+                                            metavar='Export Option',
+                                            help='What should be outputed? Options are "small_output", "large_output", "all" ')
     segment_dir_parser_panel_5.add_argument('--verbose', default=True,
-                                        help='Should Information be Printed to the Console.',
-                                        metavar="Verbose",
-                                        action='store_true',
-                                        widget='BlockCheckbox')
+                                            help='Should Information be Printed to the Console.',
+                                            metavar="Verbose",
+                                            action='store_true',
+                                            widget='BlockCheckbox')
 
     # Clean Segment parser
     cleansegment_parser = subs.add_parser('CleanSegment')
@@ -338,239 +338,234 @@ def main():
                                              default=f"{os.path.dirname(os.path.abspath(__file__))}/data/processed",
                                              help='Directory to save the processed files.')
 
-
     cleansegment_parser_panel_2 = cleansegment_parser.add_argument_group('Optional Arguments for Cleaning',
-                                                           'Provide a path to LAS file to clean.')
+                                                                         'Provide a path to LAS file to clean.')
 
     cleansegment_parser_panel_2.add_argument('--intensity_thresh', type=float, required=False,
-                                      default=100,
-                                      metavar='Intensity Threshold',
-                                      help='All intensity values below this number will be filtered out.')
+                                             default=100,
+                                             metavar='Intensity Threshold',
+                                             help='All intensity values below this number will be filtered out.')
 
     cleansegment_parser_panel_3 = cleansegment_parser.add_argument_group('Optional Arguments for Removing Bad Files',
-                                                           'Provide a path to LAS file to clean.')
+                                                                         'Provide a path to LAS file to clean.')
 
     cleansegment_parser_panel_3.add_argument('--density_thresh', type=float, required=False,
-                                      default=7000,
-                                      metavar='Density Threshold',
-                                      help='All point clouds with fewer than this number of points per meter squared will be removed')
+                                             default=7000,
+                                             metavar='Density Threshold',
+                                             help='All point clouds with fewer than this number of points per meter squared will be removed')
 
     cleansegment_parser_panel_3.add_argument('--min_point_thresh', type=float, required=False,
-                                      default=100000,
-                                      metavar='Total Points Threshold',
-                                      help='All point clouds with fewer than this number of points will be removed')
+                                             default=100000,
+                                             metavar='Total Points Threshold',
+                                             help='All point clouds with fewer than this number of points will be removed')
 
     cleansegment_parser_panel_4 = cleansegment_parser.add_argument_group(
         'Optional Arguments for the Statistical Outliers Removal (SOR) filter',
         'Arguments for the Statistical Outliers Removal (SOR) filter.')
 
     cleansegment_parser_panel_4.add_argument('--knn', type=int, required=False,
-                                      default=6,
-                                      metavar='K Nearest Neighbors',
-                                      help='number of neighbors (must be an int)')
+                                             default=6,
+                                             metavar='K Nearest Neighbors',
+                                             help='number of neighbors (must be an int)')
     cleansegment_parser_panel_4.add_argument('--nSigma', type=float, required=False,
-                                      default=10,
-                                      metavar='Total Points Threshold',
-                                      help='number of sigmas under which the points should be kept')
+                                             default=10,
+                                             metavar='Total Points Threshold',
+                                             help='number of sigmas under which the points should be kept')
 
     cleansegment_parser_panel_5 = cleansegment_parser.add_argument_group('Optional Arguments for Segmenting Corals',
-                                                               'Provide a path to LAS file to clean.')
+                                                                         'Provide a path to LAS file to clean.')
 
     cleansegment_parser_panel_5.add_argument('--pcd_above_seafloor_thresh', type=float, required=False,
-                                        default=0.08,
-                                        metavar='Meters Above Sea Floor Threshold',
-                                        help='Points above this Value will be added to the Potential Coral Cloud that is used later to identify corals.')
+                                             default=0.08,
+                                             metavar='Meters Above Sea Floor Threshold',
+                                             help='Points above this Value will be added to the Potential Coral Cloud that is used later to identify corals.')
 
     cleansegment_parser_panel_5.add_argument('--intensity_threshold', type=float, required=False,
-                                        default=320,
-                                        metavar='Intensity Threshold',
-                                        help='Points below this intensity value will be added to the Potential Coral Cloud that is used later to identify corals.')
+                                             default=320,
+                                             metavar='Intensity Threshold',
+                                             help='Points below this intensity value will be added to the Potential Coral Cloud that is used later to identify corals.')
 
     cleansegment_parser_panel_5.add_argument('--coral_cell_size', type=float, required=False,
-                                        default=0.02,
-                                        metavar='Coral Cell Size',
-                                        help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Corals.')
+                                             default=0.02,
+                                             metavar='Coral Cell Size',
+                                             help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Corals.')
     cleansegment_parser_panel_5.add_argument('--coral_min_comp_size', type=int, required=False,
-                                        default=10,
-                                        metavar='Minimum Coral Size',
-                                        help='The smallest number of grouped points that will be classified as coral.')
+                                             default=10,
+                                             metavar='Minimum Coral Size',
+                                             help='The smallest number of grouped points that will be classified as coral.')
 
     cleansegment_parser_panel_5.add_argument('--max_coral_pts', type=float, required=False,
-                                        default=5000,
-                                        metavar='Maximum Coral Size',
-                                        help='The largest number of grouped points that will be classified as coral.')
+                                             default=5000,
+                                             metavar='Maximum Coral Size',
+                                             help='The largest number of grouped points that will be classified as coral.')
 
     cleansegment_parser_panel_6 = cleansegment_parser.add_argument_group('Optional Arguments for Segmenting Fish',
-                                                               'Provide a path to LAS file to clean.')
+                                                                         'Provide a path to LAS file to clean.')
     cleansegment_parser_panel_6.add_argument('--fish_cell_size', type=float, required=False,
-                                        default=0.06,
-                                        metavar='Fish Cell Size',
-                                        help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Fish.')
+                                             default=0.06,
+                                             metavar='Fish Cell Size',
+                                             help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Fish.')
     cleansegment_parser_panel_6.add_argument('--fish_min_comp_size', type=int, required=False,
-                                        default=10,
-                                        metavar='Minimum Fish Size',
-                                        help='The smallest number of grouped points that will be classified as fish.')
+                                             default=10,
+                                             metavar='Minimum Fish Size',
+                                             help='The smallest number of grouped points that will be classified as fish.')
 
     cleansegment_parser_panel_7 = cleansegment_parser.add_argument_group('Optional Arguments for Creating DEM',
-                                                               'Provide a path to LAS file to clean.')
+                                                                         'Provide a path to LAS file to clean.')
 
     cleansegment_parser_panel_7.add_argument('--dem_grid_step', type=float, required=False,
-                                        default=.07,
-                                        metavar='Grid Step for DEM',
-                                        help='The Grid step used to create the DEM.')
+                                             default=.07,
+                                             metavar='Grid Step for DEM',
+                                             help='The Grid step used to create the DEM.')
 
     # not working rn cant figure out how to add the choice to the end of the variable name
     cleansegment_parser_panel_7.add_argument('--empty_cell_fill_option', type=str, required=False,
-                                        default="KRIGING",
-                                        metavar='Empty cell fill Ooption for DEM',
-                                        help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
+                                             default="KRIGING",
+                                             metavar='Empty cell fill Ooption for DEM',
+                                             help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
 
     cleansegment_parser_panel_8 = cleansegment_parser.add_argument_group('Other Optional Arguments',
-                                                               'Provide a path to LAS file to clean.')
+                                                                         'Provide a path to LAS file to clean.')
 
     cleansegment_parser_panel_8.add_argument('--exportOption', type=str, required=False,
-                                        default="small_output",
-                                        metavar='Export Option',
-                                        help='What should be outputed? Options are "small_output", "large_output", "all" ')
+                                             default="small_output",
+                                             metavar='Export Option',
+                                             help='What should be outputed? Options are "small_output", "large_output", "all" ')
 
     cleansegment_parser_panel_8.add_argument('--export', default=False,
-                                                     help='Should the cleaned point clouds be saved to their own folder.',
-                                                     metavar="Intermediate Export Option",
-                                                     action='store_true', widget='BlockCheckbox')
+                                             help='Should the cleaned point clouds be saved to their own folder.',
+                                             metavar="Intermediate Export Option",
+                                             action='store_true', widget='BlockCheckbox')
 
     cleansegment_parser_panel_8.add_argument('--verbose', default=True,
-                                        help='Should Information be Printed to the Console.',
-                                        metavar="Verbose",
-                                        action='store_true',
-                                        widget='BlockCheckbox')
-
-
-
-
-
-
-
+                                             help='Should Information be Printed to the Console.',
+                                             metavar="Verbose",
+                                             action='store_true',
+                                             widget='BlockCheckbox')
 
     # Many Clean Segment parser
     cleansegment_dir_parser = subs.add_parser('manyCleanSegment')
 
     cleansegment_dir_parser_panel_1 = cleansegment_dir_parser.add_argument_group('manyCleanSegment',
-                                                                                         'Provide a path to LAS file to segment.')
+                                                                                 'Provide a path to LAS file to segment.')
     cleansegment_dir_parser_panel_1.add_argument('--pcd_dir', type=str, required=True,
-                                                     metavar='Directory of Point Clouds (LAS)',
-                                                     help='Path to directory of LAS files.',
-                                                     widget='DirChooser')
+                                                 metavar='Directory of Point Clouds (LAS)',
+                                                 help='Path to directory of LAS files.',
+                                                 widget='DirChooser')
 
     cleansegment_dir_parser_panel_1.add_argument('--output_dir', type=str,
-                                                     metavar="Output Directory",
-                                                     default=f"{os.path.dirname(os.path.abspath(__file__))}/data/processed",
-                                                     help='Directory to save the processed files.',
-                                                     widget='DirChooser')
+                                                 metavar="Output Directory",
+                                                 default=f"{os.path.dirname(os.path.abspath(__file__))}/data/processed",
+                                                 help='Directory to save the processed files.',
+                                                 widget='DirChooser')
 
     cleansegment_dir_parser_panel_2 = cleansegment_dir_parser.add_argument_group('Optional Arguments for Cleaning',
-                                                           'Provide a path to LAS file to clean.')
+                                                                                 'Provide a path to LAS file to clean.')
 
     cleansegment_dir_parser_panel_2.add_argument('--intensity_thresh', type=float, required=False,
-                                      default=100,
-                                      metavar='Intensity Threshold',
-                                      help='All intensity values below this number will be filtered out.')
+                                                 default=100,
+                                                 metavar='Intensity Threshold',
+                                                 help='All intensity values below this number will be filtered out.')
 
-    cleansegment_dir_parser_panel_3 = cleansegment_dir_parser.add_argument_group('Optional Arguments for Removing Bad Files',
-                                                           'Provide a path to LAS file to clean.')
+    cleansegment_dir_parser_panel_3 = cleansegment_dir_parser.add_argument_group(
+        'Optional Arguments for Removing Bad Files',
+        'Provide a path to LAS file to clean.')
 
     cleansegment_dir_parser_panel_3.add_argument('--density_thresh', type=float, required=False,
-                                      default=7000,
-                                      metavar='Density Threshold',
-                                      help='All point clouds with fewer than this number of points per meter squared will be removed')
+                                                 default=7000,
+                                                 metavar='Density Threshold',
+                                                 help='All point clouds with fewer than this number of points per meter squared will be removed')
 
     cleansegment_dir_parser_panel_3.add_argument('--min_point_thresh', type=float, required=False,
-                                      default=100000,
-                                      metavar='Total Points Threshold',
-                                      help='All point clouds with fewer than this number of points will be removed')
+                                                 default=100000,
+                                                 metavar='Total Points Threshold',
+                                                 help='All point clouds with fewer than this number of points will be removed')
 
     cleansegment_dir_parser_panel_4 = cleansegment_dir_parser.add_argument_group(
         'Optional Arguments for the Statistical Outliers Removal (SOR) filter',
         'Arguments for the Statistical Outliers Removal (SOR) filter.')
 
     cleansegment_dir_parser_panel_4.add_argument('--knn', type=int, required=False,
-                                      default=6,
-                                      metavar='K Nearest Neighbors',
-                                      help='number of neighbors (must be an int)')
+                                                 default=6,
+                                                 metavar='K Nearest Neighbors',
+                                                 help='number of neighbors (must be an int)')
     cleansegment_dir_parser_panel_4.add_argument('--nSigma', type=float, required=False,
-                                      default=10,
-                                      metavar='Total Points Threshold',
-                                      help='number of sigmas under which the points should be kept')
+                                                 default=10,
+                                                 metavar='Total Points Threshold',
+                                                 help='number of sigmas under which the points should be kept')
 
-    cleansegment_dir_parser_panel_5 = cleansegment_dir_parser.add_argument_group('Optional Arguments for Segmenting Corals',
-                                                               'Provide a path to LAS file to clean.')
+    cleansegment_dir_parser_panel_5 = cleansegment_dir_parser.add_argument_group(
+        'Optional Arguments for Segmenting Corals',
+        'Provide a path to LAS file to clean.')
 
     cleansegment_dir_parser_panel_5.add_argument('--pcd_above_seafloor_thresh', type=float, required=False,
-                                        default=0.08,
-                                        metavar='Meters Above Sea Floor Threshold',
-                                        help='Points above this Value will be added to the Potential Coral Cloud that is used later to identify corals.')
+                                                 default=0.08,
+                                                 metavar='Meters Above Sea Floor Threshold',
+                                                 help='Points above this Value will be added to the Potential Coral Cloud that is used later to identify corals.')
 
     cleansegment_dir_parser_panel_5.add_argument('--intensity_threshold', type=float, required=False,
-                                        default=320,
-                                        metavar='Intensity Threshold',
-                                        help='Points below this intensity value will be added to the Potential Coral Cloud that is used later to identify corals.')
+                                                 default=320,
+                                                 metavar='Intensity Threshold',
+                                                 help='Points below this intensity value will be added to the Potential Coral Cloud that is used later to identify corals.')
 
     cleansegment_dir_parser_panel_5.add_argument('--coral_cell_size', type=float, required=False,
-                                        default=0.02,
-                                        metavar='Coral Cell Size',
-                                        help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Corals.')
+                                                 default=0.02,
+                                                 metavar='Coral Cell Size',
+                                                 help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Corals.')
     cleansegment_dir_parser_panel_5.add_argument('--coral_min_comp_size', type=int, required=False,
-                                        default=10,
-                                        metavar='Minimum Coral Size',
-                                        help='The smallest number of grouped points that will be classified as coral.')
+                                                 default=10,
+                                                 metavar='Minimum Coral Size',
+                                                 help='The smallest number of grouped points that will be classified as coral.')
 
     cleansegment_dir_parser_panel_5.add_argument('--max_coral_pts', type=float, required=False,
-                                        default=5000,
-                                        metavar='Maximum Coral Size',
-                                        help='The largest number of grouped points that will be classified as coral.')
+                                                 default=5000,
+                                                 metavar='Maximum Coral Size',
+                                                 help='The largest number of grouped points that will be classified as coral.')
 
-    cleansegment_dir_parser_panel_6 = cleansegment_dir_parser.add_argument_group('Optional Arguments for Segmenting Fish',
-                                                               'Provide a path to LAS file to clean.')
+    cleansegment_dir_parser_panel_6 = cleansegment_dir_parser.add_argument_group(
+        'Optional Arguments for Segmenting Fish',
+        'Provide a path to LAS file to clean.')
     cleansegment_dir_parser_panel_6.add_argument('--fish_cell_size', type=float, required=False,
-                                        default=0.06,
-                                        metavar='Fish Cell Size',
-                                        help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Fish.')
+                                                 default=0.06,
+                                                 metavar='Fish Cell Size',
+                                                 help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Fish.')
     cleansegment_dir_parser_panel_6.add_argument('--fish_min_comp_size', type=int, required=False,
-                                        default=10,
-                                        metavar='Minimum Fish Size',
-                                        help='The smallest number of grouped points that will be classified as fish.')
+                                                 default=10,
+                                                 metavar='Minimum Fish Size',
+                                                 help='The smallest number of grouped points that will be classified as fish.')
 
     cleansegment_dir_parser_panel_7 = cleansegment_dir_parser.add_argument_group('Optional Arguments for Creating DEM',
-                                                               'Provide a path to LAS file to clean.')
+                                                                                 'Provide a path to LAS file to clean.')
 
     cleansegment_dir_parser_panel_7.add_argument('--dem_grid_step', type=float, required=False,
-                                        default=.07,
-                                        metavar='Grid Step for DEM',
-                                        help='The Grid step used to create the DEM.')
+                                                 default=.07,
+                                                 metavar='Grid Step for DEM',
+                                                 help='The Grid step used to create the DEM.')
 
     # not working rn cant figure out how to add the choice to the end of the variable name
     cleansegment_dir_parser_panel_7.add_argument('--empty_cell_fill_option', type=str, required=False,
-                                        default="KRIGING",
-                                        metavar='Empty cell fill Ooption for DEM',
-                                        help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
+                                                 default="KRIGING",
+                                                 metavar='Empty cell fill Ooption for DEM',
+                                                 help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
 
     cleansegment_dir_parser_panel_8 = cleansegment_dir_parser.add_argument_group('Other Optional Arguments',
-                                                               'Provide a path to LAS file to clean.')
+                                                                                 'Provide a path to LAS file to clean.')
 
     cleansegment_dir_parser_panel_8.add_argument('--exportOption', type=str, required=False,
-                                        default="small_output",
-                                        metavar='Export Option',
-                                        help='What should be outputed? Options are "small_output", "large_output", "all" ')
+                                                 default="small_output",
+                                                 metavar='Export Option',
+                                                 help='What should be outputed? Options are "small_output", "large_output", "all" ')
 
     cleansegment_dir_parser_panel_8.add_argument('--export', default=False,
-                                                     help='Should the cleaned point clouds be saved to their own folder.',
-                                                     metavar="Intermediate Export Option",
-                                                     action='store_true', widget='BlockCheckbox')
+                                                 help='Should the cleaned point clouds be saved to their own folder.',
+                                                 metavar="Intermediate Export Option",
+                                                 action='store_true', widget='BlockCheckbox')
 
     cleansegment_dir_parser_panel_8.add_argument('--verbose', default=True,
-                                        help='Should Information be Printed to the Console.',
-                                        metavar="Verbose",
-                                        action='store_true',
-                                        widget='BlockCheckbox')
+                                                 help='Should Information be Printed to the Console.',
+                                                 metavar="Verbose",
+                                                 action='store_true',
+                                                 widget='BlockCheckbox')
 
     # Image Sort
     image_sort_parser = subs.add_parser('Sort')
@@ -608,114 +603,115 @@ def main():
                                                      default=r'C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput',
                                                      help='Directory to save the processed files.', widget='DirChooser')
 
-
-    cleansegmentsort_dir_parser_panel_2 = cleansegmentsort_dir_parser.add_argument_group('Optional Arguments for Cleaning',
-                                                                                 'Provide a path to LAS file to clean.')
+    cleansegmentsort_dir_parser_panel_2 = cleansegmentsort_dir_parser.add_argument_group(
+        'Optional Arguments for Cleaning',
+        'Provide a path to LAS file to clean.')
 
     cleansegmentsort_dir_parser_panel_2.add_argument('--intensity_thresh', type=float, required=False,
-                                                 default=100,
-                                                 metavar='Intensity Threshold',
-                                                 help='All intensity values below this number will be filtered out.')
+                                                     default=100,
+                                                     metavar='Intensity Threshold',
+                                                     help='All intensity values below this number will be filtered out.')
 
     cleansegmentsort_dir_parser_panel_3 = cleansegmentsort_dir_parser.add_argument_group(
         'Optional Arguments for Removing Bad Files',
         'Provide a path to LAS file to clean.')
 
     cleansegmentsort_dir_parser_panel_3.add_argument('--density_thresh', type=float, required=False,
-                                                 default=7000,
-                                                 metavar='Density Threshold',
-                                                 help='All point clouds with fewer than this number of points per meter squared will be removed')
+                                                     default=7000,
+                                                     metavar='Density Threshold',
+                                                     help='All point clouds with fewer than this number of points per meter squared will be removed')
 
     cleansegmentsort_dir_parser_panel_3.add_argument('--min_point_thresh', type=float, required=False,
-                                                 default=100000,
-                                                 metavar='Total Points Threshold',
-                                                 help='All point clouds with fewer than this number of points will be removed')
+                                                     default=100000,
+                                                     metavar='Total Points Threshold',
+                                                     help='All point clouds with fewer than this number of points will be removed')
 
     cleansegmentsort_dir_parser_panel_4 = cleansegmentsort_dir_parser.add_argument_group(
         'Optional Arguments for the Statistical Outliers Removal (SOR) filter',
         'Arguments for the Statistical Outliers Removal (SOR) filter.')
 
     cleansegmentsort_dir_parser_panel_4.add_argument('--knn', type=int, required=False,
-                                                 default=6,
-                                                 metavar='K Nearest Neighbors',
-                                                 help='number of neighbors (must be an int)')
+                                                     default=6,
+                                                     metavar='K Nearest Neighbors',
+                                                     help='number of neighbors (must be an int)')
     cleansegmentsort_dir_parser_panel_4.add_argument('--nSigma', type=float, required=False,
-                                                 default=10,
-                                                 metavar='Total Points Threshold',
-                                                 help='number of sigmas under which the points should be kept')
+                                                     default=10,
+                                                     metavar='Total Points Threshold',
+                                                     help='number of sigmas under which the points should be kept')
 
     cleansegmentsort_dir_parser_panel_5 = cleansegmentsort_dir_parser.add_argument_group(
         'Optional Arguments for Segmenting Corals',
         'Provide a path to LAS file to clean.')
 
     cleansegmentsort_dir_parser_panel_5.add_argument('--pcd_above_seafloor_thresh', type=float, required=False,
-                                                 default=0.08,
-                                                 metavar='Meters Above Sea Floor Threshold',
-                                                 help='Points above this Value will be added to the Potential Coral Cloud that is used later to identify corals.')
+                                                     default=0.08,
+                                                     metavar='Meters Above Sea Floor Threshold',
+                                                     help='Points above this Value will be added to the Potential Coral Cloud that is used later to identify corals.')
 
     cleansegmentsort_dir_parser_panel_5.add_argument('--intensity_threshold', type=float, required=False,
-                                                 default=320,
-                                                 metavar='Intensity Threshold',
-                                                 help='Points below this intensity value will be added to the Potential Coral Cloud that is used later to identify corals.')
+                                                     default=320,
+                                                     metavar='Intensity Threshold',
+                                                     help='Points below this intensity value will be added to the Potential Coral Cloud that is used later to identify corals.')
 
     cleansegmentsort_dir_parser_panel_5.add_argument('--coral_cell_size', type=float, required=False,
-                                                 default=0.02,
-                                                 metavar='Coral Cell Size',
-                                                 help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Corals.')
+                                                     default=0.02,
+                                                     metavar='Coral Cell Size',
+                                                     help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Corals.')
     cleansegmentsort_dir_parser_panel_5.add_argument('--coral_min_comp_size', type=int, required=False,
-                                                 default=10,
-                                                 metavar='Minimum Coral Size',
-                                                 help='The smallest number of grouped points that will be classified as coral.')
+                                                     default=10,
+                                                     metavar='Minimum Coral Size',
+                                                     help='The smallest number of grouped points that will be classified as coral.')
 
     cleansegmentsort_dir_parser_panel_5.add_argument('--max_coral_pts', type=float, required=False,
-                                                 default=5000,
-                                                 metavar='Maximum Coral Size',
-                                                 help='The largest number of grouped points that will be classified as coral.')
+                                                     default=5000,
+                                                     metavar='Maximum Coral Size',
+                                                     help='The largest number of grouped points that will be classified as coral.')
 
     cleansegmentsort_dir_parser_panel_6 = cleansegmentsort_dir_parser.add_argument_group(
         'Optional Arguments for Segmenting Fish',
         'Provide a path to LAS file to clean.')
     cleansegmentsort_dir_parser_panel_6.add_argument('--fish_cell_size', type=float, required=False,
-                                                 default=0.06,
-                                                 metavar='Fish Cell Size',
-                                                 help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Fish.')
+                                                     default=0.06,
+                                                     metavar='Fish Cell Size',
+                                                     help='The Maximum Value of the Cell size for the Octree Level that will be used to segment Fish.')
     cleansegmentsort_dir_parser_panel_6.add_argument('--fish_min_comp_size', type=int, required=False,
-                                                 default=10,
-                                                 metavar='Minimum Fish Size',
-                                                 help='The smallest number of grouped points that will be classified as fish.')
+                                                     default=10,
+                                                     metavar='Minimum Fish Size',
+                                                     help='The smallest number of grouped points that will be classified as fish.')
 
-    cleansegmentsort_dir_parser_panel_7 = cleansegmentsort_dir_parser.add_argument_group('Optional Arguments for Creating DEM',
-                                                                                 'Provide a path to LAS file to clean.')
+    cleansegmentsort_dir_parser_panel_7 = cleansegmentsort_dir_parser.add_argument_group(
+        'Optional Arguments for Creating DEM',
+        'Provide a path to LAS file to clean.')
 
     cleansegmentsort_dir_parser_panel_7.add_argument('--dem_grid_step', type=float, required=False,
-                                                 default=.07,
-                                                 metavar='Grid Step for DEM',
-                                                 help='The Grid step used to create the DEM.')
+                                                     default=.07,
+                                                     metavar='Grid Step for DEM',
+                                                     help='The Grid step used to create the DEM.')
 
     # not working rn cant figure out how to add the choice to the end of the variable name
     cleansegmentsort_dir_parser_panel_7.add_argument('--empty_cell_fill_option', type=str, required=False,
-                                                 default="KRIGING",
-                                                 metavar='Empty cell fill Ooption for DEM',
-                                                 help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
+                                                     default="KRIGING",
+                                                     metavar='Empty cell fill Option for DEM',
+                                                     help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
 
     cleansegmentsort_dir_parser_panel_8 = cleansegmentsort_dir_parser.add_argument_group('Other Optional Arguments',
-                                                                                 'Provide a path to LAS file to clean.')
+                                                                                         'Provide a path to LAS file to clean.')
 
     cleansegmentsort_dir_parser_panel_8.add_argument('--exportOption', type=str, required=False,
-                                                 default="small_output",
-                                                 metavar='Export Option',
-                                                 help='What should be outputed? Options are "small_output", "large_output", "all" ')
+                                                     default="small_output",
+                                                     metavar='Export Option',
+                                                     help='What should be outputed? Options are "small_output", "large_output", "all" ')
 
     cleansegmentsort_dir_parser_panel_8.add_argument('--export', default=False,
-                                                 help='Should the cleaned point clouds be saved to their own folder.',
-                                                 metavar="Intermediate Export Option",
-                                                 action='store_true', widget='BlockCheckbox')
+                                                     help='Should the cleaned point clouds be saved to their own folder.',
+                                                     metavar="Intermediate Export Option",
+                                                     action='store_true', widget='BlockCheckbox')
 
     cleansegmentsort_dir_parser_panel_8.add_argument('--verbose', default=True,
-                                                 help='Should Information be Printed to the Console.',
-                                                 metavar="Verbose",
-                                                 action='store_true',
-                                                 widget='BlockCheckbox')
+                                                     help='Should Information be Printed to the Console.',
+                                                     metavar="Verbose",
+                                                     action='store_true',
+                                                     widget='BlockCheckbox')
 
     args = parser.parse_args()
 
@@ -743,7 +739,7 @@ def main():
 
         # TODO add all parameterized arguments here
         elif args.command == 'Segment':
-             # Create a segmentCloud instance
+            # Create a segmentCloud instance
             # cloud_segmentor = segmentCloud(pcd_file=args.pcd_file,
             #                                output_dir=args.output_dir,
             #                                verbose=args.verbose)
@@ -823,7 +819,6 @@ def main():
 
             # Clean the cloud
             cloud_cleaner.clean()
-
 
             cloud_segmentor = segmentCloud(pcd_file=args.pcd_file,
                                            output_dir=args.output_dir,
