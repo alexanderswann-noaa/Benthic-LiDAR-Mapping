@@ -76,6 +76,29 @@ Now try running the test:
 python src/features/argParse.py data/raw --output-dir data/processed
 ```
 
+### Common Issues
+
+One of the most common issues is getting this error
+
+```bash
+
+    from _cloudComPy import *
+ModuleNotFoundError: No module named '_cloudComPy'
+```
+
+Luckily this is very easy to fix, Navigate to the `CloudComPy310` folder and run the `envCloudComPy.bat` file.
+This will reset the `PYTHONPATH`s which should make your computer be able to locate the cloudcompare module
+
+```bash
+# cmd
+
+cd <path install>\CloudComPy310
+envCloudComPy.bat
+```
+
+
+
+
 If successful, it should output processed `bin` files in `data/processed`
 
 ## Use
