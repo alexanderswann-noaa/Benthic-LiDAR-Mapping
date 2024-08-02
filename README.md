@@ -104,7 +104,7 @@ If successful, it should output processed `bin` files in `data/processed`
 
 ## Use
 
-Below is an example for how the driving script, `main.py`, can be used:
+Below is an example for how the driving script, `app.py`, can be used:
 
 ![GUI Image](./figures/gui_pic.PNG)
 
