@@ -66,7 +66,7 @@ conda activate CloudComPy310
 ```
 
 
-### Tests
+### Tests (not up to date)
 
 Now try running the test:
 
@@ -75,6 +75,10 @@ Now try running the test:
 
 python src/features/argParse.py data/raw --output-dir data/processed
 ```
+
+
+If successful, it should output processed `bin` files in `data/processed`
+
 
 ### Common Issues
 
@@ -96,11 +100,10 @@ This will reset the `PYTHONPATH`s which should make your computer be able to loc
 cd <path install>\CloudComPy310
 envCloudComPy.bat
 ```
+Now running `app.py` and `main.py` should work.
 
 
 
-
-If successful, it should output processed `bin` files in `data/processed`
 
 ## Use
 
