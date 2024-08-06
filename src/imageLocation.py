@@ -15,7 +15,7 @@ import pandas as pd
 
 def getImgUTM(filename):
     loc = get_image_location(filename)
-    return utm.from_latlon(loc[0], loc[1])
+    return utm.from_latlon(loc[0], loc[1]), loc[2]
 
 
 def _convert_to_degress(value):
@@ -72,7 +72,7 @@ def get_image_location(filename):
 
     gps_altitude_ref = _get_if_exist(exif_data, 'GPS GPSAltitudeRef')
     gps_altitude = _get_if_exist(exif_data, 'GPS GPSAltitude')
-    print("altitude" + str(gps_altitude))
+    print("altitude: " + str(gps_altitude))
 
     if gps_altitude and gps_altitude_ref:
         alt = gps_altitude.values[0]
@@ -134,14 +134,14 @@ class imageLocation:
 
                     #print(valTime)
 
-                    imagesData.append([valTime, (os.path.join(imgdirectory, file)), file])
+                    imagesData.append([valTime[0], (os.path.join(imgdirectory, file)), file, valTime[1]])
 
                     # new_row = pd.DataFrame(
                     # {'x': [vals[0]], 'y': [vals[1]],
                     #   'file_path': [(os.path.join(imgdirectory, file))], 'file_name': [file]})
 
                     # pd.concat([imagesDf, new_row], ignore_index=False)
-            imagesDf = pd.DataFrame(imagesData, columns=['location', 'file_path', 'file_name'])
+            imagesDf = pd.DataFrame(imagesData, columns=['location', 'file_path', 'file_name', 'm_above_sealevel'])
 
             imagesDf.to_csv(os.path.join(output_base_dir, "images.csv"))
         else:

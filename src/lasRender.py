@@ -93,68 +93,7 @@ class lasRender:
         cc.setColorScaleShowHistogram(True)
 
         dataDir = self.output_dir
-        #
-        # # cc.setOrthoView()
-        # cc.setIsoView1()
-        # cc.zoomOnSelectedEntity()
-        #
-        # cc.setOrthoView()
-        # cc.setGlobalZoom()
-        # cc.render(os.path.join(dataDir, "renderb.png"), 2000, 1500)
-        #
-        # cc.setFrontView()
-        # cc.render(os.path.join(dataDir, "renderFront.png"), 2000, 1500)
-        #
-        # cc.setBottomView()
-        # cc.render(os.path.join(dataDir, "renderBottom.png"), 2000, 1500)
-        #
-        # cc.setTopView()
-        # cc.render(os.path.join(dataDir, "renderTop.png"), 2000, 1500)
-        #
-        # cc.setBackView()
-        # cc.render(os.path.join(dataDir, "renderBack.png"), 2000, 1500)
-        #
-        # cc.setLeftView()
-        # cc.render(os.path.join(dataDir, "renderLeft.png"), 2000, 1500)
-        #
-        # cc.setRightView()
-        # cc.render(os.path.join(dataDir, "renderRight.png"), 2000, 1500)
-        #
-        # cc.setIsoView1()
-        # cc.render(os.path.join(dataDir, "renderIso1.png"), 2000, 1500)
-        #
-        # cc.setIsoView2()
-        # cc.render(os.path.join(dataDir, "renderIso2.png"), 2000, 1500)
-        #
-        # cc.setCustomView((3., 5., 7.), (1., 2., 3.))
-        # cc.render(os.path.join(dataDir, "renderCustom.png"), 2000, 1500)
-        #
-        # cc.setCameraPos((2., -15, 90.))
-        # cc.render(os.path.join(dataDir, "renderCamPos1.png"), 2000, 1500)
-        #
-        # cc.setCameraPos((15., -15, 90.))
-        # cc.render(os.path.join(dataDir, "renderCamPos2.png"), 2000, 1500)
-        #
-        # #cc.setCameraPos((-53.7, 57.8, 27.7))
-        #
-        # dist = 20.
-        # alphaRad = math.pi / 20.
-        # #cc.setCenteredPerspectiveView()
-        #
-        # #print(self.img_info['location'])
-        #
-        # print(self.img_info['location'][24])
-        #
-        # #cc.setRightView()
-        # #cc.setCenteredPerspectiveView()
-        # cc.setCustomView(( self.img_info['location'][24][0], self.img_info['location'][24][1] , 20 ), (1., 1., 1.))
-        # cc.setGlobalZoom()
-        # cc.render(os.path.join(self.output_dir, "render1.png"), 1280, 720)
-        #
-        # cc.setCenteredPerspectiveView()
-        # cc.setCustomView((0., 1., 0.), (0., 0., 1.))
-        # #cc.setGlobalZoom()
-        # cc.render(os.path.join(self.output_dir, "render2.png"), 1280, 720)
+
 
         xshift = cloud1.getGlobalShift()[0]
         yshift = cloud1.getGlobalShift()[1]
@@ -163,77 +102,22 @@ class lasRender:
         print(yshift)
 
         os.makedirs(self.output_dir, exist_ok=True)
-        # cc.setCenteredPerspectiveView()
-        # for i in range(45):
-        #     print((self.img_info['location'][i][0] + xshift, self.img_info['location'][i][1]+ yshift))
-        #     #cc.setCustomView((0., math.cos(i * alphaRad), -math.sin(i * alphaRad)), (0., math.sin(i * alphaRad), math.cos(i * alphaRad)))
-        #     cc.setOrthoView()
-        #     #cc.setGlobalZoom()
-        #     cc.setCustomView((0.0, 0.0, -1.0), (1.0, 0.0, 0))
-        #     cc.setCameraPos((  self.img_info['location'][i][0] + xshift,self.img_info['location'][i][1]+ yshift , 10 ))
-        #     #cc.setCameraPos((self.img_info['location'][i][0], self.img_info['location'][i][1], 100))
-        #
-        #
-        #     cc.render(os.path.join(self.output_dir, "renderangle_%d.png" % i), 2000, 1500, False)
 
-        # for i in range(9):
-        #     for j in range(9):
-        #         print((i,j))
-        #         #cc.setCustomView((0., math.cos(i * alphaRad), -math.sin(i * alphaRad)), (0., math.sin(i * alphaRad), math.cos(i * alphaRad)))
-        #         cc.setOrthoView()
-        #         #cc.setCenteredPerspectiveView()
-        #         cc.setCustomView((0.0, 0.0, -1.0), (1.0, 0.0, 0))
-        #         cc.setCameraPos((i, j, 10))
-        #         #cc.setCameraPos((self.img_info['location'][i][0], self.img_info['location'][i][1], 100))
-        #
-        #
-        #         cc.render(os.path.join(self.output_dir, "renderangle1_%d_%d.png" % (i, j)), 2000, 900, False)
-
-        # for i in range(9):
-        #     for j in range(9):
-        #         print((i,j))
-        #         #cc.setCustomView((0., math.cos(i * alphaRad), -math.sin(i * alphaRad)), (0., math.sin(i * alphaRad), math.cos(i * alphaRad)))
-        #         cc.setCenteredPerspectiveView()
-        #         cc.setCustomView((0.0, 0.0, -1.0), (1.0, 0.0, 0))
-        #
-        #         cc.setCameraPos((i, j, 60))
-        #         #cc.setCameraPos((self.img_info['location'][i][0] +i, self.img_info['location'][i][1]+j, 100))
-        #
-        #
-        #         cc.render(os.path.join(self.output_dir, "renderangle2_%d_%d.png" % (i, j)), 2000, 900, False)
 
         for i in range(len(self.img_info)):
             print((self.img_info['location'][i][0] + xshift, self.img_info['location'][i][1] + yshift))
             #cc.setCustomView((0., math.cos(i * alphaRad), -math.sin(i * alphaRad)), (0., math.sin(i * alphaRad), math.cos(i * alphaRad)))
             cc.setViewerPerspectiveView()
-            cc.setCustomView((0.0, 0.0, -1.0), (-1.0, 0.0, 0.0))
+            cc.setCustomView((-0.30, 0.0, -1.0), (-1.0, 0.0, 0.0))
 
-            cc.setCameraPos((self.img_info['location'][i][0] + xshift, self.img_info['location'][i][1] + yshift, 60))
+            cc.setCameraPos((self.img_info['location'][i][0] + xshift, self.img_info['location'][i][1] + yshift, -self.img_info['m_above_sealevel'][i] + 5))
             #cc.setCameraPos((self.img_info['location'][i][0] +i, self.img_info['location'][i][1]+j, 100))
 
             img_name =  ".".join( (self.img_info['file_name'][i]) .split(".")[:-1] )+ "_pcd.png"
             print(img_name)
             cc.render(os.path.join(self.output_dir, img_name ), 2000, 900, False )
             #cc.render(os.path.join(self.output_dir, "renderangle3_%d.png" % i), 2000, 900, False)
-        #
-        # dist = 20.
-        # alphaRad = math.pi / 20.
-        # cc.setCenteredPerspectiveView()
-        # for i in range(15):
-        #     cc.setCustomView((0., math.cos(i * alphaRad), -math.sin(i * alphaRad)),
-        #                      (0., math.sin(i * alphaRad), math.cos(i * alphaRad)))
-        #     cc.setGlobalZoom()
-        #     cc.render(os.path.join(self.output_dir, "renderangle4_%d.png" % i), 2000, 1500, False)
-
-
-
-
-        # img_1=cv2.imread(os.path.join(dataDir, "render1.png"))
-        #
-        # cv2.imshow('image', img_1)
-        # cv2.waitKey(0)
-
-        # ---render-display-end
+  
 
         announce("rendering")
 
