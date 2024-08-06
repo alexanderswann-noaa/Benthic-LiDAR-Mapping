@@ -15,6 +15,10 @@ from src.imageTimeTagging import processIMGdir as imgProcess
 
 from src.imageTimeSort import IMGsort as IMGsort
 
+from src.lasRender import lasRender as lasRender
+
+from src.imageLocation import imageLocation as imageLocation
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Gooey GUI
@@ -29,7 +33,7 @@ def main():
     parser = GooeyParser(description='Process and classify point clouds.')
     subs = parser.add_subparsers(help='commands', dest='command')
 
-    # TODO add all the other parameters!
+
     # Clean parser
     clean_parser = subs.add_parser('CleanFile')
 
@@ -48,7 +52,7 @@ def main():
                                       widget='DirChooser')
 
     clean_parser_panel_2 = clean_parser.add_argument_group('Optional Arguments for Cleaning',
-                                                           'Provide a path to LAS file to clean.')
+                                                           'More Options For Cleaning.')
 
     clean_parser_panel_2.add_argument('--intensity_thresh', type=float, required=False,
                                       default=100,
@@ -56,7 +60,7 @@ def main():
                                       help='All intensity values below this number will be filtered out.')
 
     clean_parser_panel_3 = clean_parser.add_argument_group('Optional Arguments for Removing Bad Files',
-                                                           'Provide a path to LAS file to clean.')
+                                                           'More Options Removing Bad Files.')
 
     clean_parser_panel_3.add_argument('--density_thresh', type=float, required=False,
                                       default=7000,
@@ -82,7 +86,7 @@ def main():
                                       help='number of sigmas under which the points should be kept')
 
     clean_parser_panel_5 = clean_parser.add_argument_group('Optional Arguments for Removing Bad Files',
-                                                           'Other Arguments.')
+                                                           'More Options Removing Bad Files.')
 
     clean_parser_panel_5.add_argument('--verbose', default=True,
                                       help='Should Information be Printed to the Console.',
@@ -113,7 +117,7 @@ def main():
                                           widget='DirChooser')
 
     clean_dir_parser_panel_2 = clean_dir_parser.add_argument_group('Optional Arguments for Cleaning',
-                                                                   'Provide a path to LAS file to clean.')
+                                                                   'More Options For Cleaning.')
 
     clean_dir_parser_panel_2.add_argument('--intensity_thresh', type=float, required=False,
                                           default=100,
@@ -121,7 +125,7 @@ def main():
                                           help='All intensity values below this number will be filtered out.')
 
     clean_dir_parser_panel_3 = clean_dir_parser.add_argument_group('Optional Arguments for Removing Bad Files',
-                                                                   'Provide a path to LAS file to clean.')
+                                                                   'More Options Removing Bad Files.')
 
     clean_dir_parser_panel_3.add_argument('--density_thresh', type=float, required=False,
                                           default=7000,
@@ -147,7 +151,7 @@ def main():
                                           help='number of sigmas under which the points should be kept')
 
     clean_dir_parser_panel_5 = clean_dir_parser.add_argument_group('Optional Arguments for Removing Bad Files',
-                                                                   'Other Arguments.')
+                                                                   'More Options Removing Bad Files.')
 
     clean_dir_parser_panel_5.add_argument('--verbose', default=True,
                                           help='Should Information be Printed to the Console.',
@@ -177,7 +181,7 @@ def main():
                                         help='Directory to save the processed files.')
 
     segment_parser_panel_2 = segment_parser.add_argument_group('Optional Arguments for Segmenting Corals',
-                                                               'Provide a path to LAS file to clean.')
+                                                               'More Options For Coral Segmentation.')
 
     segment_parser_panel_2.add_argument('--pcd_above_seafloor_thresh', type=float, required=False,
                                         default=0.08,
@@ -204,7 +208,7 @@ def main():
                                         help='The largest number of grouped points that will be classified as coral.')
 
     segment_parser_panel_3 = segment_parser.add_argument_group('Optional Arguments for Segmenting Fish',
-                                                               'Provide a path to LAS file to clean.')
+                                                               'More Options For Fish Segmentation.')
     segment_parser_panel_3.add_argument('--fish_cell_size', type=float, required=False,
                                         default=0.06,
                                         metavar='Fish Cell Size',
@@ -224,7 +228,7 @@ def main():
 
     segment_parser_panel_4.add_argument('--empty_cell_fill_option', type=str, required=False,
                                         default="KRIGING",
-                                        metavar='Empty cell fill Ooption for DEM',
+                                        metavar='Empty cell fill Option for DEM',
                                         help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
 
     segment_parser_panel_5 = segment_parser.add_argument_group('Other Optional Arguments',
@@ -258,7 +262,7 @@ def main():
                                             widget='DirChooser')
 
     segment_dir_parser_panel_2 = segment_dir_parser.add_argument_group('Optional Arguments for Segmenting Corals',
-                                                                       'Provide a path to LAS file to clean.')
+                                                                       'More Options For Coral Segmentation.')
 
     segment_dir_parser_panel_2.add_argument('--pcd_above_seafloor_thresh', type=float, required=False,
                                             default=0.08,
@@ -285,7 +289,7 @@ def main():
                                             help='The largest number of grouped points that will be classified as coral.')
 
     segment_dir_parser_panel_3 = segment_dir_parser.add_argument_group('Optional Arguments for Segmenting Fish',
-                                                                       'Provide a path to LAS file to clean.')
+                                                                       'More Options For Fish Segmentation.')
     segment_dir_parser_panel_3.add_argument('--fish_cell_size', type=float, required=False,
                                             default=0.06,
                                             metavar='Fish Cell Size',
@@ -339,7 +343,7 @@ def main():
                                              help='Directory to save the processed files.')
 
     cleansegment_parser_panel_2 = cleansegment_parser.add_argument_group('Optional Arguments for Cleaning',
-                                                                         'Provide a path to LAS file to clean.')
+                                                                         'More Options For Cleaning.')
 
     cleansegment_parser_panel_2.add_argument('--intensity_thresh', type=float, required=False,
                                              default=100,
@@ -347,7 +351,7 @@ def main():
                                              help='All intensity values below this number will be filtered out.')
 
     cleansegment_parser_panel_3 = cleansegment_parser.add_argument_group('Optional Arguments for Removing Bad Files',
-                                                                         'Provide a path to LAS file to clean.')
+                                                                         'More Options Removing Bad Files.')
 
     cleansegment_parser_panel_3.add_argument('--density_thresh', type=float, required=False,
                                              default=7000,
@@ -373,7 +377,7 @@ def main():
                                              help='number of sigmas under which the points should be kept')
 
     cleansegment_parser_panel_5 = cleansegment_parser.add_argument_group('Optional Arguments for Segmenting Corals',
-                                                                         'Provide a path to LAS file to clean.')
+                                                                         'More Options For Coral Segmentation.')
 
     cleansegment_parser_panel_5.add_argument('--pcd_above_seafloor_thresh', type=float, required=False,
                                              default=0.08,
@@ -400,7 +404,7 @@ def main():
                                              help='The largest number of grouped points that will be classified as coral.')
 
     cleansegment_parser_panel_6 = cleansegment_parser.add_argument_group('Optional Arguments for Segmenting Fish',
-                                                                         'Provide a path to LAS file to clean.')
+                                                                         'More Options For Fish Segmentation.')
     cleansegment_parser_panel_6.add_argument('--fish_cell_size', type=float, required=False,
                                              default=0.06,
                                              metavar='Fish Cell Size',
@@ -460,7 +464,7 @@ def main():
                                                  widget='DirChooser')
 
     cleansegment_dir_parser_panel_2 = cleansegment_dir_parser.add_argument_group('Optional Arguments for Cleaning',
-                                                                                 'Provide a path to LAS file to clean.')
+                                                                                 'More Options For Cleaning.')
 
     cleansegment_dir_parser_panel_2.add_argument('--intensity_thresh', type=float, required=False,
                                                  default=100,
@@ -469,7 +473,7 @@ def main():
 
     cleansegment_dir_parser_panel_3 = cleansegment_dir_parser.add_argument_group(
         'Optional Arguments for Removing Bad Files',
-        'Provide a path to LAS file to clean.')
+        'More Options Removing Bad Files.')
 
     cleansegment_dir_parser_panel_3.add_argument('--density_thresh', type=float, required=False,
                                                  default=7000,
@@ -496,7 +500,7 @@ def main():
 
     cleansegment_dir_parser_panel_5 = cleansegment_dir_parser.add_argument_group(
         'Optional Arguments for Segmenting Corals',
-        'Provide a path to LAS file to clean.')
+        'More Options For Coral Segmentation.')
 
     cleansegment_dir_parser_panel_5.add_argument('--pcd_above_seafloor_thresh', type=float, required=False,
                                                  default=0.08,
@@ -524,7 +528,7 @@ def main():
 
     cleansegment_dir_parser_panel_6 = cleansegment_dir_parser.add_argument_group(
         'Optional Arguments for Segmenting Fish',
-        'Provide a path to LAS file to clean.')
+        'More Options For Fish Segmentation.')
     cleansegment_dir_parser_panel_6.add_argument('--fish_cell_size', type=float, required=False,
                                                  default=0.06,
                                                  metavar='Fish Cell Size',
@@ -605,7 +609,7 @@ def main():
 
     cleansegmentsort_dir_parser_panel_2 = cleansegmentsort_dir_parser.add_argument_group(
         'Optional Arguments for Cleaning',
-        'Provide a path to LAS file to clean.')
+        'More Options For Cleaning.')
 
     cleansegmentsort_dir_parser_panel_2.add_argument('--intensity_thresh', type=float, required=False,
                                                      default=100,
@@ -614,7 +618,7 @@ def main():
 
     cleansegmentsort_dir_parser_panel_3 = cleansegmentsort_dir_parser.add_argument_group(
         'Optional Arguments for Removing Bad Files',
-        'Provide a path to LAS file to clean.')
+        'More Options Removing Bad Files.')
 
     cleansegmentsort_dir_parser_panel_3.add_argument('--density_thresh', type=float, required=False,
                                                      default=7000,
@@ -641,7 +645,7 @@ def main():
 
     cleansegmentsort_dir_parser_panel_5 = cleansegmentsort_dir_parser.add_argument_group(
         'Optional Arguments for Segmenting Corals',
-        'Provide a path to LAS file to clean.')
+        'More Options For Coral Segmentation.')
 
     cleansegmentsort_dir_parser_panel_5.add_argument('--pcd_above_seafloor_thresh', type=float, required=False,
                                                      default=0.08,
@@ -669,7 +673,7 @@ def main():
 
     cleansegmentsort_dir_parser_panel_6 = cleansegmentsort_dir_parser.add_argument_group(
         'Optional Arguments for Segmenting Fish',
-        'Provide a path to LAS file to clean.')
+        'More Options For Fish Segmentation.')
     cleansegmentsort_dir_parser_panel_6.add_argument('--fish_cell_size', type=float, required=False,
                                                      default=0.06,
                                                      metavar='Fish Cell Size',
@@ -695,7 +699,7 @@ def main():
                                                      help='How should the values for empty spaces be filled. OPTIONS: "LEAVE_EMPTY", "FILL_MINIMUM_HEIGHT","FILL_MAXIMUM_HEIGHT","FILL_CUSTOM_HEIGHT","FILL_AVERAGE_HEIGHT","INTERPOLATE_DELAUNAY","KRIGING"')
 
     cleansegmentsort_dir_parser_panel_8 = cleansegmentsort_dir_parser.add_argument_group('Other Optional Arguments',
-                                                                                         'Provide a path to LAS file to clean.')
+                                                                                         'Other Optional Arguments.')
 
     cleansegmentsort_dir_parser_panel_8.add_argument('--exportOption', type=str, required=False,
                                                      default="small_output",
@@ -712,6 +716,22 @@ def main():
                                                      metavar="Verbose",
                                                      action='store_true',
                                                      widget='BlockCheckbox')
+
+
+    # Las Image Render
+    image_sort_parser = subs.add_parser('FileRender')
+    image_sort_parser_panel_1 = image_sort_parser.add_argument_group('Image Render')
+    image_sort_parser_panel_1.add_argument('--bin_file', type=str,
+                                           default=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\segmented\binFiles\SMALL_processed_LLS_2024-03-15T054218010100_1_4.bin",
+                                           help='Directory containing the LAS files.', widget='DirChooser')
+    image_sort_parser_panel_1.add_argument('--img_dir', type=str,
+                                           default=r"C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput\Sorted Images\processed_LLS_2024-03-15T054218.010100_1_4.las",
+                                           help='Directory containing the folders that contain the images.',
+                                           metavar="Image Path", widget='DirChooser')
+    image_sort_parser_panel_1.add_argument('--output_dir', type=str,
+                                           default=r'C:\Users\Alexander.Swann\Desktop\testingDATA\newoutput6',
+                                           help='Directory to save the rendered images.', widget='DirChooser')
+
 
     args = parser.parse_args()
 
@@ -737,7 +757,6 @@ def main():
             # Clean the cloud
             cloud_cleaner.clean()
 
-        # TODO add all parameterized arguments here
         elif args.command == 'Segment':
             # Create a segmentCloud instance
             # cloud_segmentor = segmentCloud(pcd_file=args.pcd_file,
@@ -948,6 +967,17 @@ def main():
 
             imgSort = IMGsort(tracks.tracksDf, images.imagesDf, tracks.output_dir)
             imgSort.run()
+        elif args.command == "FileRender":
+
+            images = imageLocation(input_dir= args.img_dir, output_dir = args.output_dir )
+            images.run()
+
+            tracks = lasRender(bin_file=args.bin_file, image_dir = args.img_dir, output_dir = args.output_dir, img_info = images.imagesDf)
+
+            #tracks.load_pcd()
+
+            tracks.run()
+
 
         print("Done.")
 
