@@ -57,7 +57,7 @@ pip install py7zr
 python build.py
 
 
-cd <path install>\CloudComPy310
+cd build\CloudComPy310
 # Run the following
 envCloudComPy.bat
 
