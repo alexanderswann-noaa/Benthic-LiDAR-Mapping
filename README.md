@@ -32,6 +32,9 @@ conda create --name CloudComPy310 python=3.10 -y
 conda activate CloudComPy310
 
 conda update -n base -c defaults conda -y
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+
 conda install -n base conda-libmamba-solver -y
 conda config --set solver libmamba 
 
