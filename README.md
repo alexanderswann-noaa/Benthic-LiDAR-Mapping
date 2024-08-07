@@ -56,8 +56,10 @@ they're not, download them [here](https://www.simulation.openfields.fr/index.php
 pip install py7zr
 python build.py
 
+
+cd <path install>\CloudComPy310
 # Run the following
-./build/CloudComPy310/envCloudComPy.bat
+envCloudComPy.bat
 
 # Expected output:
 Checking environment, Python test: import cloudComPy
