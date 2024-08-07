@@ -35,8 +35,10 @@ conda update -n base -c defaults conda -y
 conda config --add channels conda-forge
 conda config --set channel_priority strict
 
-conda install -n base conda-libmamba-solver git -y
+conda install -n base conda-libmamba-solver -y
 conda config --set solver libmamba
+
+conda install git -y
 
 
 git clone https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping.git
