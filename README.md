@@ -35,7 +35,7 @@ conda update -n base -c defaults conda -y
 conda config --add channels conda-forge
 conda config --set channel_priority strict
 
-conda install -n base conda-libmamba-solver -y
+conda install -n base conda-libmamba-solver git -y
 conda config --set solver libmamba 
 
 # This will take a while, go grab a cup of coffee ☕
