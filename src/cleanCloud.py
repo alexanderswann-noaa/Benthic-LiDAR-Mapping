@@ -5,11 +5,11 @@ import traceback
 
 import numpy as np
 
-# import cloudComPy as cc
-# import cloudComPy.CSF
+import cloudComPy as cc
+import cloudComPy.CSF
 
-import CloudCompare.cloudComPy as cc
-import CloudCompare.cloudComPy.CSF
+# import CloudCompare.cloudComPy as cc
+# import CloudCompare.cloudComPy.CSF
 
 from common import announce
 
