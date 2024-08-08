@@ -39,9 +39,8 @@ conda install -n base conda-libmamba-solver -y
 conda config --set solver libmamba
 
 conda install git -y
-
-
 git clone https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping.git
+cd Benthic-LiDAR-Mapping
 
 # This will take a while, go grab a cup of coffee ☕
 conda install --file requirements.txt -y
@@ -53,46 +52,48 @@ they're not, download them [here](https://www.simulation.openfields.fr/index.php
 ```bash
 # cmd
 
+# Install the dependency 
 pip install py7zr
+# Run the script
 python build.py
 
-
+# Change directories 
 cd build\CloudComPy310
 # Run the following
 envCloudComPy.bat
+```
 
+The expected output from the `envCloudComPy.bat` file is:
+```bash
 # Expected output:
 Checking environment, Python test: import cloudComPy
 Environment OK!
 ```
 
-Finally, update you `PYTHONPATH` to have the directory of `CloudCompare`:
+If you do not receive this message, contact `Jordan` or `Xander`. Finally, update you `PYTHONPATH` to have the directory 
+of `CloudCompare`:
 
 ```bash
 # cmd
 
+# Update the following to your specific path... (don't just copy and paste)
 conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare
 conda activate CloudComPy310
 ```
 
+### Running
 
-### Tests (not up to date)
-
-Now try running the test:
+Now, try running the app:
 
 ```bash
 # cmd
 
-python src/features/argParse.py data/raw --output-dir data/processed
+python app.py
 ```
-
-
-If successful, it should output processed `bin` files in `data/processed`
-
 
 ### Common Issues
 
-One of the most common issues is getting this error
+One of the most common issues is getting this error from running `envCloudComPy.bat`:
 
 ```bash
 
@@ -100,9 +101,8 @@ One of the most common issues is getting this error
 ModuleNotFoundError: No module named '_cloudComPy'
 ```
 
-Luckily this is very easy to fix, Navigate to the `CloudComPy310` folder and run the `envCloudComPy.bat` file.
-
-This will reset the `PYTHONPATH`s which should make your computer be able to locate the cloudcompare module
+Luckily this is very easy to fix, Navigate to the `CloudComPy310` folder and run the `envCloudComPy.bat` file. This will 
+reset the `PYTHONPATH`s which should make your computer be able to locate the CloudCompare module
 
 ```bash
 # cmd
@@ -112,19 +112,20 @@ envCloudComPy.bat
 ```
 Now running `app.py` and `main.py` should work.
 
-
-
-
 ## Use
 
 Below is an example for how the driving script, `app.py`, can be used:
 
 ![GUI Image](./figures/gui_pic.PNG)
 
+### Extra
+
+To run SfM on a folder of images, `Metashape` needs to be installed:
 
 ```bash
-# Instructions
+# cmd
 
-
-
+pip install packages/Metashape-2.0.2-cp37.cp38.cp39.cp310.cp311-none-win_amd64.whl
 ```
+
+The license is expected to be stored as the variable `METASHAPE_LICENSE` on your computer.
