@@ -141,7 +141,7 @@ The expected output from the `envCloudComPy.bat` file is:
  Environment OK!**
  <br>
 
-If you do not receive this message, contact `Jordan` or `Xander`. Finally, update you `PYTHONPATH` to have the directory 
+If you do not receive this message, contact [Jordan](https://github.com/Jordan-Pierce) or [Xander](https://github.com/alexanderswann). Finally, update you `PYTHONPATH` to have the directory 
 of `CloudCompare`:
 <br>
 <br>
