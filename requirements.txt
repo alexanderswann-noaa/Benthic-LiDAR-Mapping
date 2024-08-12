@@ -270,6 +270,7 @@ ptyprocess=0.7.0=pyhd3deb0d_0
 pugixml=1.11.4=h63175ca_1
 pure_eval=0.2.3=pyhd8ed1ab_0
 py-opencv=4.5.5=py310hbbfc1a7_13
+py7zr=0.22.0=pyhd8ed1ab_0
 pybind11=2.13.1=py310hc19bc0b_0
 pybind11-global=2.13.1=py310hc19bc0b_0
 pycodestyle=2.11.1=pyhd8ed1ab_0
