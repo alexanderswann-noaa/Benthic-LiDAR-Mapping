@@ -189,7 +189,6 @@ python app.py
 # Rerunning the App after install
 
 1. Open `Anaconda Prompt` **NOT** `Anaconda Powershell Prompt` **VERY IMPORTANT**
-<br>
 The `Anaconda Powershell Prompt` does not consistently work.
 <br>
 
