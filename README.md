@@ -219,6 +219,9 @@ Fill in `/your.name/...` with your User Profile name and the location of `Benthi
 ```bash
 python app.py
 ```
+<br>
+If you restarted your computer recently and you are getting an error, follow the steps for potential issue #1
+
 ***
 ### Potential Issues
 
