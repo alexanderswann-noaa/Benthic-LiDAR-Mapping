@@ -70,6 +70,9 @@ This install assumes you do not have git on your computer so we need to install 
 conda install git -y
 ```
 
+
+
+
 Now cd to where you would like the repository to live.
 
 Commonly GitHub repositories are stored in a folder named GitHub within your Documents folder.
