@@ -29,39 +29,42 @@ Then follow the steps below to prepare your conda environment for this Repositor
 <br>
 <br>
 
-2a. Copy this and run, do not change env name
+2a. Open Anaconda Prompt **NOT** Anaconda Powershell Prompt **VERY IMPORTANT**
+The Anaconda Powershell Prompt does not consistently work.
+
+3a. Copy this and run, do not change env name
 ```bash
 conda create --name CloudComPy310 python=3.10 -y
 ```
 <br>
 
 
-3a. Next Activate the conda environment
+4a. Next Activate the conda environment
 ```bash
 conda activate CloudComPy310
 ```
 <br>
 
-4a. Now we update conda. If your conda is not up to date this could take a moment
+5a. Now we update conda. If your conda is not up to date this could take a moment
 ```bash
 conda update -n base -c defaults conda -y
 ```
 <br>
 
-5a. Now we add the conda forge channel, this is where we will download our packages from
+6a. Now we add the conda forge channel, this is where we will download our packages from
 ```bash
 conda config --add channels conda-forge
 ```
 <br>
 
-6a. Next we set the channel priority to strict.
+7a. Next we set the channel priority to strict.
 ```bash
 conda config --set channel_priority strict
 ```
 <br>
 
 
-7a. When installing packages a solver is used to determine the prerequisite packages needed.
+8a. When installing packages a solver is used to determine the prerequisite packages needed.
 
 The default solver often takes a long time and occasionally fails, so we install the libmamba solver
 ```bash
@@ -69,14 +72,14 @@ conda install -n base conda-libmamba-solver -y
 ```
 <br>
 
-8a. Now we set libmamba as the solver
+9a. Now we set libmamba as the solver
 ```bash
 conda config --set solver libmamba
 ```
 <br>
 
 
-9a. To get this repository on your computer we will use git.
+10a. To get this repository on your computer we will use git.
 
 This install assumes you do not have git on your computer so we need to install it.
 ```bash
@@ -176,12 +179,51 @@ conda activate CloudComPy310
 
 # First Time Running the App
 
-Now, try running the app:
+Now from the same Anaconda Prompt Window, run the app:
 
 ```bash
 python app.py
 ```
 
+# Rerunning the App after install
+
+1. Open Anaconda Prompt **NOT** Anaconda Powershell Prompt **VERY IMPORTANT**
+The Anaconda Powershell Prompt does not consistently work.
+<br>
+
+# Updating Repository
+
+To sync your local version of the repository to the updated on on GitHub you must run 3 commands.
+
+1. cd into the repository.
+   
+For example if your User Profile name is `Alexander.Swann` and you cloned the repo within `Documents\GitHub`
+<br>
+The code would look like this:
+<br>
+**EXAMPLE:** `cd C:/Users/Alexander.Swann/Documents/GitHub/Benthic-LiDAR-Mapping`
+<br>
+<br>
+Fill in `/your.name/...` with your User Profile name and the location of `Benthic-LiDAR-Mapping`
+<br>
+**Template:** `conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping`
+<br>
+<br>
+
+2. Fetch the newest version of the code from the internet.
+```bash
+git fetch
+```
+<br>
+   
+3. Pull that newest version to your local machine.
+```bash
+git pull
+```
+<br>
+
+**Now you are ready to run the newest version of the code!!**
+<br>
 
 # Use
 
@@ -194,8 +236,6 @@ Below is an example for how the driving script, `app.py`, can be used:
 To run SfM on a folder of images, `Metashape` needs to be installed:
 
 ```bash
-# cmd
-
 pip install packages/Metashape-2.0.2-cp37.cp38.cp39.cp310.cp311-none-win_amd64.whl
 ```
 
