@@ -96,10 +96,6 @@ This could take a moment.
 conda install --file requirements.txt -y
 ```
 
-After this is done, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
-they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
-
-
 The build.py script extracts the CloudCompare Python Binary
 To extract this binary we need to install py7zr via pip
 
@@ -107,7 +103,12 @@ FUTURE: see why we cannot use conda to install because it is available from cond
 ```bash
 pip install py7zr
 ```
-Run build the script
+
+
+After installing the required packages, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
+they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
+
+Run build.py the script
 ```bash
 
 python build.py
