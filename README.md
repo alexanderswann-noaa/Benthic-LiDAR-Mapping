@@ -24,7 +24,7 @@ validate proper installation.
 
 ## Install Part A: Prepare Conda Environment for Install
 
-1a. Iinstall [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
+1a. Install [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
 Then follow the steps below to prepare your conda environment for this Repository's Code:
 <br>
 <br>
