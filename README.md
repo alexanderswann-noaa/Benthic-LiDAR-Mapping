@@ -31,7 +31,7 @@ Then follow the steps below to prepare your conda environment for this Repositor
 
 2a. Open `Anaconda Prompt` **NOT** `Anaconda Powershell Prompt` **VERY IMPORTANT**
 <br>
-The Anaconda Powershell Prompt does not consistently work.
+The `Anaconda Powershell Prompt` does not consistently work.
 
 3a. Copy this and run, do not change env name
 ```bash
@@ -40,7 +40,7 @@ conda create --name CloudComPy310 python=3.10 -y
 <br>
 
 
-4a. Next Activate the conda environment
+4a. Next Activate the CloudComPy310 conda environment
 ```bash
 conda activate CloudComPy310
 ```
@@ -172,7 +172,7 @@ Fill in `/your.name/...` with your User Profile name and the location of `Benthi
 <br>
 <br>
 
-10b. Reactivate the Conda environment
+10b. Reactivate the CloudComPy310 Conda environment
 ```bash
 conda activate CloudComPy310
 ```
@@ -180,7 +180,7 @@ conda activate CloudComPy310
 
 # First Time Running the App
 
-Now from the same Anaconda Prompt Window, run the app:
+Now from the same `Anaconda Prompt` Window, run the app:
 
 ```bash
 python app.py
@@ -188,13 +188,43 @@ python app.py
 
 # Rerunning the App after install
 
-1. Open Anaconda Prompt **NOT** Anaconda Powershell Prompt **VERY IMPORTANT**
-The Anaconda Powershell Prompt does not consistently work.
+1. Open `Anaconda Prompt` **NOT** `Anaconda Powershell Prompt` **VERY IMPORTANT**
 <br>
+The `Anaconda Powershell Prompt` does not consistently work.
+<br>
+
+2. Next Activate the CloudComPy310 conda environment
+```bash
+conda activate CloudComPy310
+```
+<br>
+
+
+3. cd into the repository.
+   
+For example if your User Profile name is `Alexander.Swann` and you cloned the repo within `Documents\GitHub`
+<br>
+The code would look like this:
+<br>
+**EXAMPLE:** `cd C:/Users/Alexander.Swann/Documents/GitHub/Benthic-LiDAR-Mapping`
+<br>
+<br>
+Fill in `/your.name/...` with your User Profile name and the location of `Benthic-LiDAR-Mapping`
+<br>
+**Template:** `conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping`
+<br>
+<br>
+
+4. Run the App.
+```bash
+python app.py
+```
+
+
 
 # Updating Repository
 
-To sync your local version of the repository to the updated on on GitHub you must run 3 commands.
+To update your local version of the repository to the newest version on GitHub you must run 3 commands.
 
 1. cd into the repository.
    
