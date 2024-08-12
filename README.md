@@ -8,11 +8,13 @@ This project is used to further process LiDAR collected by AUVs in the large MDB
 to as "micro bathymetry", is collected using underwater laser scanners with imaging payloads and post-processed by 
 [Voyis](https://voyis.com/).
 
-This repo does the follow:
-- asdf
-- asdf
-- asdf
-- asdf
+This repo does the following:
+- Cleaning Raw Point Clouds
+- Segmenting Fish out of Point Clouds
+- Segmenting Corals and other organisms out of Point Clouds
+- Creating a Sea Floor DEM
+- Assign Images to Specific Point Clouds
+- Render Images of Point Cloud Track
 
 ## Getting Started
 
@@ -29,18 +31,48 @@ Then follow the steps below to install the python dependencies:
 
 # Copy this and run, do not change env name
 conda create --name CloudComPy310 python=3.10 -y
+```bash
+
+```bash
 conda activate CloudComPy310
+```bash
 
+```bash
 conda update -n base -c defaults conda -y
+```bash
+
+
+```bash
 conda config --add channels conda-forge
+```bash
+
+
+```bash
 conda config --set channel_priority strict
+```bash
 
+
+```bash
 conda install -n base conda-libmamba-solver -y
-conda config --set solver libmamba
+```bash
 
+```bash
+conda config --set solver libmamba
+```bash
+
+```bash
 conda install git -y
+```bash
+
+
+```bash
 git clone https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping.git
+```bash
+
+```bash
 cd Benthic-LiDAR-Mapping
+```bash
+
 
 # This will take a while, go grab a cup of coffee ☕
 conda install --file requirements.txt -y
