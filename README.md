@@ -21,11 +21,11 @@ This repo does the following:
 Follow the steps below to set up your `anaconda` environment, install dependencies, and run a simple unit test to
 validate proper installation.
 
-### Install
-## Install Part A: Prepare Environment for Install
 
-1a. Before getting started, install [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
-Then follow the steps below to install the python dependencies:
+## Install Part A: Prepare Conda Environment for Install
+
+1a. Iinstall [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
+Then follow the steps below to prepare your conda environment for this Repository's Code:
 <br>
 <br>
 
