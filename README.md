@@ -110,7 +110,7 @@ cd Benthic-LiDAR-Mapping
 
 4b. Within the repository there is a requirements.txt file with all of the conda packages needed to run the code.
 
-This could take a moment.
+This could take a few minutes.
 ```bash
 conda install --file requirements.txt -y
 ```
