@@ -31,49 +31,49 @@ Then follow the steps below to install the python dependencies:
 
 # Copy this and run, do not change env name
 conda create --name CloudComPy310 python=3.10 -y
-```bash
+```
 
 ```bash
 conda activate CloudComPy310
-```bash
+```
 
 ```bash
 conda update -n base -c defaults conda -y
-```bash
+```
 
 
 ```bash
 conda config --add channels conda-forge
-```bash
+```
 
 
 ```bash
 conda config --set channel_priority strict
-```bash
+```
 
 
 ```bash
 conda install -n base conda-libmamba-solver -y
-```bash
+```
 
 ```bash
 conda config --set solver libmamba
-```bash
+```
 
 ```bash
 conda install git -y
-```bash
+```
 
 
 ```bash
 git clone https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping.git
-```bash
+```
 
 ```bash
 cd Benthic-LiDAR-Mapping
+```
+
 ```bash
-
-
 # This will take a while, go grab a cup of coffee ☕
 conda install --file requirements.txt -y
 ```
@@ -86,11 +86,18 @@ they're not, download them [here](https://www.simulation.openfields.fr/index.php
 
 # Install the dependency 
 pip install py7zr
+```
+
+```bash
 # Run the script
 python build.py
+```
 
+```bash
 # Change directories 
 cd build\CloudComPy310
+```
+```bash
 # Run the following
 envCloudComPy.bat
 ```
@@ -110,6 +117,8 @@ of `CloudCompare`:
 
 # Update the following to your specific path... (don't just copy and paste)
 conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare
+```
+```bash
 conda activate CloudComPy310
 ```
 
