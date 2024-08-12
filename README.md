@@ -24,7 +24,7 @@ validate proper installation.
 
 ## Install Part A: Prepare Conda Environment for Install
 
-1a. Iinstall [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
+1a. Install [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
 Then follow the steps below to prepare your conda environment for this Repository's Code:
 <br>
 <br>
@@ -228,5 +228,10 @@ Now running `app.py` and `main.py` should work.
 2. After installing the required packages, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
 they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
 <br>
+
+
+## CloudComPy
+
+For more information about CloudComPy click [here](https://github.com/CloudCompare/CloudComPy/blob/master/doc/UseWindowsCondaBinary.md)
 
 
