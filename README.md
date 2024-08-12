@@ -34,6 +34,8 @@ conda create --name CloudComPy310 python=3.10 -y
 ```
 
 ```bash
+# cmd
+
 conda activate CloudComPy310
 ```
 
