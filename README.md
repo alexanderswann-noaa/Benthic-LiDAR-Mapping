@@ -188,9 +188,10 @@ python app.py
 
 # Rerunning the App after install
 
-1. Open `Anaconda Prompt` **NOT** `Anaconda Powershell Prompt` **VERY IMPORTANT**
+1. Open `Anaconda Prompt` **NOT** `Anaconda Powershell Prompt` **VERY IMPORTANT**!!
+
 The `Anaconda Powershell Prompt` does not consistently work.
-<br>
+<br><br>
 
 2. Next Activate the CloudComPy310 conda environment
 ```bash
