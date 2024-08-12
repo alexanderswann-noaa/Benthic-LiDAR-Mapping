@@ -74,9 +74,9 @@ Now cd to where you would like the repository to live.
 
 Commonly GitHub repositories are stored in a folder named GitHub within your Documents folder.
 
-```bash
-EXAMPLE: cd Documents\GitHub
-```
+
+# EXAMPLE: cd Documents\GitHub
+
 
 
 Now we use the git clone command to get the repository on your computer
@@ -134,12 +134,10 @@ Environment OK!
 If you do not receive this message, contact `Jordan` or `Xander`. Finally, update you `PYTHONPATH` to have the directory 
 of `CloudCompare`:
 
-```bash
-# cmd
 
 # Update the following to your specific path... (don't just copy and paste)
-conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare
-```
+# EXAMPLE: conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare
+
 ```bash
 conda activate CloudComPy310
 ```
