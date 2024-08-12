@@ -27,6 +27,7 @@ validate proper installation.
 1a. Before getting started, install [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
 Then follow the steps below to install the python dependencies:
 <br>
+<br>
 
 2a. Copy this and run, do not change env name
 ```bash
@@ -75,7 +76,7 @@ conda config --set solver libmamba
 <br>
 
 
-9a.To get this repository on your computer we will use git.
+9a. To get this repository on your computer we will use git.
 
 This install assumes you do not have git on your computer so we need to install it.
 ```bash
@@ -154,32 +155,56 @@ cd..\..
 
 **9b. Update the following to your specific path... (don't just copy and paste)**
 
-**Template:** `conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare`
-
-If your User Profile name in `Alexander.Swann` and you cloned the repo within `Documents\GitHub`
+For example if your User Profile name is `Alexander.Swann` and you cloned the repo within `Documents\GitHub`
 <br>
-The code would look like this
+The code would look like this:
+<br>
 **EXAMPLE:** `conda env config vars set PYTHONPATH=C:/Users/Alexander.Swann/Documents/GitHub/Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare`
+<br>
+<br>
+Fill in `/your.name/...` with your User Profile name and the location of `Benthic-LiDAR-Mapping`
+<br>
+**Template:** `conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare`
+<br>
 <br>
 
 10b. Reactivate the Conda environment
 ```bash
 conda activate CloudComPy310
 ```
+<br>
 
 # First Time Running the App
 
 Now, try running the app:
 
 ```bash
-# cmd
-
 python app.py
 ```
 
+
+# Use
+
+Below is an example for how the driving script, `app.py`, can be used:
+
+![GUI Image](./figures/gui_pic.PNG)
+
+### Extra
+
+To run SfM on a folder of images, `Metashape` needs to be installed:
+
+```bash
+# cmd
+
+pip install packages/Metashape-2.0.2-cp37.cp38.cp39.cp310.cp311-none-win_amd64.whl
+```
+
+The license is expected to be stored as the variable `METASHAPE_LICENSE` on your computer.
+
+
 ### Common Issues
 
-One of the most common issues is getting this error from running `envCloudComPy.bat`:
+1. One of the most common issues is getting this error from running `envCloudComPy.bat`:
 
 ```bash
 
@@ -205,20 +230,3 @@ they're not, download them [here](https://www.simulation.openfields.fr/index.php
 <br>
 
 
-## Use
-
-Below is an example for how the driving script, `app.py`, can be used:
-
-![GUI Image](./figures/gui_pic.PNG)
-
-### Extra
-
-To run SfM on a folder of images, `Metashape` needs to be installed:
-
-```bash
-# cmd
-
-pip install packages/Metashape-2.0.2-cp37.cp38.cp39.cp310.cp311-none-win_amd64.whl
-```
-
-The license is expected to be stored as the variable `METASHAPE_LICENSE` on your computer.
