@@ -29,7 +29,8 @@ Then follow the steps below to prepare your conda environment for this Repositor
 <br>
 <br>
 
-2a. Open Anaconda Prompt **NOT** Anaconda Powershell Prompt **VERY IMPORTANT**
+2a. Open `Anaconda Prompt` **NOT** `Anaconda Powershell Prompt` **VERY IMPORTANT**
+<br>
 The Anaconda Powershell Prompt does not consistently work.
 
 3a. Copy this and run, do not change env name
