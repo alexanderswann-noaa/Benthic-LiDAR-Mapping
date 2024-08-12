@@ -22,123 +22,133 @@ Follow the steps below to set up your `anaconda` environment, install dependenci
 validate proper installation.
 
 ### Install
+## Part A: Prepare Environment for Install
 
-Before getting started, install [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
+1a. Before getting started, install [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
 Then follow the steps below to install the python dependencies:
+<br>
 
-
- Copy this and run, do not change env name
+2a. Copy this and run, do not change env name
 ```bash
 conda create --name CloudComPy310 python=3.10 -y
 ```
+<br>
 
-Next Activate the conda environment
+
+3a. Next Activate the conda environment
 ```bash
 conda activate CloudComPy310
 ```
+<br>
 
-Now we update conda. If your conda is not up to date this could take a moment
+4a. Now we update conda. If your conda is not up to date this could take a moment
 ```bash
 conda update -n base -c defaults conda -y
 ```
-Now we add the conda forge channel, this is where we will download our packages from
+<br>
+
+5a. Now we add the conda forge channel, this is where we will download our packages from
 ```bash
 conda config --add channels conda-forge
 ```
+<br>
 
-Next we set the channel priority to strict.
+6a. Next we set the channel priority to strict.
 ```bash
 conda config --set channel_priority strict
 ```
+<br>
 
-When installing packages a solver is used to determine the prerequisite packages needed.
+
+7a. When installing packages a solver is used to determine the prerequisite packages needed.
 
 The default solver often takes a long time and occasionally fails, so we install the libmamba solver
 ```bash
 conda install -n base conda-libmamba-solver -y
 ```
+<br>
 
-Now we set libmamba as the solver
+8a. Now we set libmamba as the solver
 ```bash
 conda config --set solver libmamba
 ```
+<br>
 
-To get this repository on your computer we will use git.
+
+9a.To get this repository on your computer we will use git.
 
 This install assumes you do not have git on your computer so we need to install it.
 ```bash
 conda install git -y
 ```
+<br>
 
- <br> 
-  <br> 
-   <br> 
+# Part B: Getting the Repository on your computer
 
-
-Now cd to where you would like the repository to live.
+1b. Now cd to where you would like the repository to live.
 
 Commonly GitHub repositories are stored in a folder named GitHub within your Documents folder.
 
 
-### EXAMPLE: cd Documents\GitHub
+### EXAMPLE: `cd Documents\GitHub`
+<br>
 
 
-
-Now we use the git clone command to get the repository on your computer
+2b. Now we use the git clone command to get the repository on your computer
 ```bash
 git clone https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping.git
 ```
+<br>
 
-Use the cd command to get into the repository
+3b. Use the cd command to get into the repository
 ```bash
 cd Benthic-LiDAR-Mapping
 ```
+<br>
 
-Within the repository there is a requirements.txt file with all of the conda packages needed to run the code.
+
+4b. Within the repository there is a requirements.txt file with all of the conda packages needed to run the code.
 
 This could take a moment.
 ```bash
 conda install --file requirements.txt -y
 ```
+<br>
 
-The build.py script extracts the CloudCompare Python Binary
-To extract this binary we need to install py7zr via pip
-
-FUTURE: see why we cannot use conda to install because it is available from conda [check here](https://github.com/miurahr/py7zr)
+5b. Run build.py the script
 ```bash
-pip install py7zr
-```
-
-
-After installing the required packages, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
-they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
-
-Run build.py the script
-```bash
-
 python build.py
 ```
-Change directories, enter the CloudComPy310 folder
+<br>
+
+6b. Change directories, enter the CloudComPy310 folder
 ```bash 
 cd build\CloudComPy310
 ```
-Once in the folder run this script
+<br>
 
-This script sets specific PYTHONPATH varialbes so that python knows where to access CloudComPy
+7b. Once in the folder run this script
+
+This script sets specific `PYTHONPATH` varialbes so that python knows where to access CloudComPy
 ```bash
-
 envCloudComPy.bat
 ```
 
 The expected output from the `envCloudComPy.bat` file is:
 ```bash
-# Expected output:
 Checking environment, Python test: import cloudComPy
 Environment OK!
 ```
 
 If you do not receive this message, contact `Jordan` or `Xander`. Finally, update you `PYTHONPATH` to have the directory 
 of `CloudCompare`:
+<br>
+
+8b. Return back to main repo folder
+```bash
+cd..\..
+```
+<br>
 
 
 ### Update the following to your specific path... (don't just copy and paste)
@@ -178,6 +188,13 @@ cd <path install>\CloudComPy310
 envCloudComPy.bat
 ```
 Now running `app.py` and `main.py` should work.
+<br>
+
+
+2. After installing the required packages, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
+they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
+<br>
+
 
 ## Use
 
