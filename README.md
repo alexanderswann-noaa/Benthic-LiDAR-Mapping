@@ -230,3 +230,8 @@ they're not, download them [here](https://www.simulation.openfields.fr/index.php
 <br>
 
 
+## CloudComPy
+
+For more information about CloudComPy click [here](https://github.com/CloudCompare/CloudComPy/blob/master/doc/UseWindowsCondaBinary.md)
+
+
