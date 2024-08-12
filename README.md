@@ -219,6 +219,60 @@ Fill in `/your.name/...` with your User Profile name and the location of `Benthi
 ```bash
 python app.py
 ```
+***
+### Potential Issues
+
+1. If you get this error:
+
+```bash
+
+    from _cloudComPy import *
+ModuleNotFoundError: No module named '_cloudComPy'
+```
+
+
+Try this:
+
+1a. Change directories, enter the CloudComPy310 folder
+```bash 
+cd build\CloudComPy310
+```
+<br>
+
+2a. Once in the folder run this script
+
+This script sets specific `PYTHONPATH` varialbes so that python knows where to access CloudComPy
+```bash
+envCloudComPy.bat
+```
+
+The expected output from the `envCloudComPy.bat` file is:
+
+**Checking environment, Python test: import cloudComPy<br>
+ Environment OK!**
+ <br>
+
+If you do not receive this message, contact [Jordan](https://github.com/Jordan-Pierce) or [Xander](https://github.com/alexanderswann). Finally, update you `PYTHONPATH` to have the directory 
+of `CloudCompare`:
+<br>
+<br>
+
+3a. Return back to main repo folder
+```bash
+cd..\..
+```
+<br>
+
+4a. Rerun the App.
+```bash
+python app.py
+```
+
+***
+2. Install Build Issue
+2a. After installing the required packages, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
+they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
+<br>
 
 
 
@@ -272,33 +326,6 @@ pip install packages/Metashape-2.0.2-cp37.cp38.cp39.cp310.cp311-none-win_amd64.w
 
 The license is expected to be stored as the variable `METASHAPE_LICENSE` on your computer.
 
-
-### Common Issues
-
-1. One of the most common issues is getting this error from running `envCloudComPy.bat`:
-
-```bash
-
-    from _cloudComPy import *
-ModuleNotFoundError: No module named '_cloudComPy'
-```
-
-Luckily this is very easy to fix, Navigate to the `CloudComPy310` folder and run the `envCloudComPy.bat` file. This will 
-reset the `PYTHONPATH`s which should make your computer be able to locate the CloudCompare module
-
-```bash
-# cmd
-
-cd <path install>\CloudComPy310
-envCloudComPy.bat
-```
-Now running `app.py` and `main.py` should work.
-<br>
-
-
-2. After installing the required packages, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
-they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
-<br>
 
 
 ## CloudComPy
