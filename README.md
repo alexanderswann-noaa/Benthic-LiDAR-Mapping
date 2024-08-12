@@ -22,7 +22,7 @@ Follow the steps below to set up your `anaconda` environment, install dependenci
 validate proper installation.
 
 ### Install
-## Part A: Prepare Environment for Install
+## Install Part A: Prepare Environment for Install
 
 1a. Before getting started, install [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
 Then follow the steps below to install the python dependencies:
@@ -83,7 +83,7 @@ conda install git -y
 ```
 <br>
 
-# Part B: Getting the Repository on your computer
+# Install Part B: Getting the Repository on your computer
 
 1b. Now cd to where you would like the repository to live.
 
@@ -135,13 +135,14 @@ envCloudComPy.bat
 ```
 
 The expected output from the `envCloudComPy.bat` file is:
-```bash
-Checking environment, Python test: import cloudComPy
-Environment OK!
-```
+
+**Checking environment, Python test: import cloudComPy<br>
+ Environment OK!**
+ <br>
 
 If you do not receive this message, contact `Jordan` or `Xander`. Finally, update you `PYTHONPATH` to have the directory 
 of `CloudCompare`:
+<br>
 <br>
 
 8b. Return back to main repo folder
@@ -151,14 +152,22 @@ cd..\..
 <br>
 
 
-### Update the following to your specific path... (don't just copy and paste)
-### EXAMPLE: conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare
+**9b. Update the following to your specific path... (don't just copy and paste)**
 
+**Template:** `conda env config vars set PYTHONPATH=C:/Users/your.name/.../Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare`
+
+If your User Profile name in `Alexander.Swann` and you cloned the repo within `Documents\GitHub`
+<br>
+The code would look like this
+**EXAMPLE:** `conda env config vars set PYTHONPATH=C:/Users/Alexander.Swann/Documents/GitHub/Benthic-LiDAR-Mapping/build/CloudComPy310/CloudCompare`
+<br>
+
+10b. Reactivate the Conda environment
 ```bash
 conda activate CloudComPy310
 ```
 
-### Running
+# First Time Running the App
 
 Now, try running the app:
 
