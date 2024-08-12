@@ -26,81 +26,100 @@ validate proper installation.
 Before getting started, install [`minconda`](https://docs.anaconda.com/miniconda/) on your machine if it's not already. 
 Then follow the steps below to install the python dependencies:
 
+
+ Copy this and run, do not change env name
 ```bash
 # cmd
 
-# Copy this and run, do not change env name
 conda create --name CloudComPy310 python=3.10 -y
 ```
 
+Next Activate the conda environment
 ```bash
-# cmd
-
 conda activate CloudComPy310
 ```
 
+Now we update conda. If your conda is not up to date this could take a moment
 ```bash
 conda update -n base -c defaults conda -y
 ```
-
-
+Now we add the conda forge channel, this is where we will download our packages from
 ```bash
 conda config --add channels conda-forge
 ```
 
-
+Next we set the channel priority to strict.
 ```bash
 conda config --set channel_priority strict
 ```
 
-
+When installing packages a solver is used to determine the prerequisite packages needed.
+The default solver often takes a long time and occasionally fails, so we install the libmamba solver
 ```bash
 conda install -n base conda-libmamba-solver -y
 ```
 
+Now we set libmamba as the solver
 ```bash
 conda config --set solver libmamba
 ```
 
+To get this repository on your computer we will use git.
+This install assumes you do not have git on your computer so we need to install it.
 ```bash
 conda install git -y
 ```
 
+Now cd to where you would like the repository to live.
+Commonly GitHub repositories are stored in a folder named GitHub within your Documents folder.
 
+```bash
+EXAMPLE: cd Documents\GitHub
+```
+
+
+Now we use the git clone command to get the repository on your computer
 ```bash
 git clone https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping.git
 ```
 
+Use the cd command to get into the repository
 ```bash
 cd Benthic-LiDAR-Mapping
 ```
 
+Within the repository there is a requirements.txt file with all of the conda packages needed to run the code.
+This could take a moment.
 ```bash
-# This will take a while, go grab a cup of coffee ☕
 conda install --file requirements.txt -y
 ```
 
 After this is done, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
 they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
 
+
+The build.py script extracts the CloudCompare Python Binary
+To extract this binary we need to install py7zr via pip
+FUTURE: see why we cannot use conda to install because it is available from conda [check here](https://github.com/miurahr/py7zr)
 ```bash
 # cmd
 
 # Install the dependency 
 pip install py7zr
 ```
-
+Run build the script
 ```bash
-# Run the script
+
 python build.py
 ```
-
-```bash
-# Change directories 
+Change directories, enter the CloudComPy310 folder
+```bash 
 cd build\CloudComPy310
 ```
+Once in the folder run this script
+This script sets specific PYTHONPATH varialbes so that python knows where to access CloudComPy
 ```bash
-# Run the following
+
 envCloudComPy.bat
 ```
 
