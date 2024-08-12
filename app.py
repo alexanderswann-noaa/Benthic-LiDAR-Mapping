@@ -20,7 +20,11 @@ from src.lasRenderMany import lasRenderMany as lasRenderMany
 
 from src.imageLocation import imageLocation as imageLocation
 
-from src.SfM import sfm
+try:
+  from src.SfM import sfm
+except:
+  print("An exception occurred while loading SfM, do not use SfM tool")
+
 
 
 # ----------------------------------------------------------------------------------------------------------------------
