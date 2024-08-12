@@ -32,6 +32,7 @@ Then follow the steps below to prepare your conda environment for this Repositor
 2a. Open `Anaconda Prompt` **NOT** `Anaconda Powershell Prompt` **VERY IMPORTANT**
 <br>
 The `Anaconda Powershell Prompt` does not consistently work.
+<br>
 
 3a. Copy this and run, do not change env name
 ```bash
@@ -273,6 +274,7 @@ python app.py
 
 ***
 2. Install Build Issue
+<br>
 2a. After installing the required packages, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
 they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
 <br>
