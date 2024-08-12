@@ -29,8 +29,6 @@ Then follow the steps below to install the python dependencies:
 
  Copy this and run, do not change env name
 ```bash
-# cmd
-
 conda create --name CloudComPy310 python=3.10 -y
 ```
 
@@ -107,9 +105,6 @@ To extract this binary we need to install py7zr via pip
 
 FUTURE: see why we cannot use conda to install because it is available from conda [check here](https://github.com/miurahr/py7zr)
 ```bash
-# cmd
-
-# Install the dependency 
 pip install py7zr
 ```
 Run build the script
