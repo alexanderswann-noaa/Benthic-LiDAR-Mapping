@@ -5,7 +5,7 @@ import glob
 import argparse
 import traceback
 
-import CloudCompare.cloudComPy as cc
+import cloudComPy as cc
 import pandas as pd
 from common import announce
 from lasRender import lasRender
