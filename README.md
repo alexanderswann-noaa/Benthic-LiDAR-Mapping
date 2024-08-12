@@ -54,6 +54,7 @@ conda config --set channel_priority strict
 ```
 
 When installing packages a solver is used to determine the prerequisite packages needed.
+
 The default solver often takes a long time and occasionally fails, so we install the libmamba solver
 ```bash
 conda install -n base conda-libmamba-solver -y
@@ -65,12 +66,14 @@ conda config --set solver libmamba
 ```
 
 To get this repository on your computer we will use git.
+
 This install assumes you do not have git on your computer so we need to install it.
 ```bash
 conda install git -y
 ```
 
 Now cd to where you would like the repository to live.
+
 Commonly GitHub repositories are stored in a folder named GitHub within your Documents folder.
 
 ```bash
@@ -89,6 +92,7 @@ cd Benthic-LiDAR-Mapping
 ```
 
 Within the repository there is a requirements.txt file with all of the conda packages needed to run the code.
+
 This could take a moment.
 ```bash
 conda install --file requirements.txt -y
@@ -100,6 +104,7 @@ they're not, download them [here](https://www.simulation.openfields.fr/index.php
 
 The build.py script extracts the CloudCompare Python Binary
 To extract this binary we need to install py7zr via pip
+
 FUTURE: see why we cannot use conda to install because it is available from conda [check here](https://github.com/miurahr/py7zr)
 ```bash
 # cmd
@@ -117,6 +122,7 @@ Change directories, enter the CloudComPy310 folder
 cd build\CloudComPy310
 ```
 Once in the folder run this script
+
 This script sets specific PYTHONPATH varialbes so that python knows where to access CloudComPy
 ```bash
 
