@@ -19,7 +19,7 @@ This repo does the following:
 ## Quick Links
 - [First Install](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#getting-started)
 - [Running the App](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#rerunning-the-app-after-install)
-- [How to use the App](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#using)
+- [How to use the App](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#using-the-app)
 - [Updating Local Code](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#updating-repository)
 - [Issue Solutions](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#potential-issues)
 
@@ -250,7 +250,7 @@ cd build\CloudComPy310
 ```
 <br>
 
-2a. Once in the folder run this script
+1b. Once in the folder run this script
 
 This script sets specific `PYTHONPATH` varialbes so that python knows where to access CloudComPy
 ```bash
@@ -268,24 +268,30 @@ of `CloudCompare`:
 <br>
 <br>
 
-3a. Return back to main repo folder
+1c. Return back to main repo folder
 ```bash
 cd..\..
 ```
 <br>
 
-4a. Rerun the App.
+1d. Rerun the App.
 ```bash
 python app.py
 ```
+<br>
+
 
 ***
-2. Install Build Issue
+
+Potential Issue 2:
+CloudComPy Binary Does Not Exist<br>
 <br>
-2a. After installing the required packages, run the `build.py` script, which **expects that the CloudComPy binary is already in `./build`**
+2a. After installing the required packages, run the `build.py` script, which expects that the CloudComPy binary is already in `./build`
 <br>
 if it's not, download it [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
 <br>
+<br>
+
 
 
 
