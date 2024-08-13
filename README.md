@@ -16,6 +16,13 @@ This repo does the following:
 - Assign Images to Specific Point Clouds
 - Render Images of Point Cloud Track
 
+## Quick Links
+- [First Install](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#getting-started)
+- [Running the App](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#rerunning-the-app-after-install)
+- [How to use the App](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#using)
+- [Updating Local Code](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#updating-repository)
+- [Issue Solutions](https://github.com/alexanderswann-noaa/Benthic-LiDAR-Mapping/tree/main?tab=readme-ov-file#potential-issues)
+
 ## Getting Started
 
 Follow the steps below to set up your `anaconda` environment, install dependencies, and run a simple unit test to
@@ -275,8 +282,9 @@ python app.py
 ***
 2. Install Build Issue
 <br>
-2a. After installing the required packages, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
-they're not, download them [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
+2a. After installing the required packages, run the `build.py` script, which **expects that the CloudComPy binary is already in `./build`**
+<br>
+if it's not, download it [here](https://www.simulation.openfields.fr/index.php/cloudcompy-downloads/3-cloudcompy-binaries/5-windows-cloudcompy-binaries/106-cloudcompy310-20240613) and place the `.7z` file in the `./build` folder.
 <br>
 
 
@@ -315,7 +323,7 @@ git pull
 **Now you are ready to run the newest version of the code!!**
 <br>
 
-# Use
+# Using the App
 
 Below is an example for how the driving script, `app.py`, can be used:
 
