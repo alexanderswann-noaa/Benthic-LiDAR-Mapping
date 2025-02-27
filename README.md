@@ -36,7 +36,9 @@ conda install -n base conda-libmamba-solver -y
 conda config --set solver libmamba 
 
 # This will take a while, go grab a cup of coffee ☕
-conda install --file requirements.txt -y
+conda install --file conda_requirements.txt -y
+
+pip install -r pip_requirements.txt
 ```
 
 After this is done, run the `build.py` script, which **expects that the `binaries` are already in `./build`**; if 
@@ -45,10 +47,10 @@ they're not, download them [here](https://www.simulation.openfields.fr/index.php
 ```bash
 # cmd
 
-pip install py7zr
+# Run the script
 python build.py
 
-# Run the following
+# Then run the following
 ./build/CloudComPy310/envCloudComPy.bat
 
 # Expected output:
@@ -73,7 +75,7 @@ Now try running the test:
 ```bash
 # cmd
 
-python src/features/argParse.py data/raw --output-dir data/processed
+python main.py
 ```
 
 If successful, it should output processed `bin` files in `data/processed`

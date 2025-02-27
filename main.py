@@ -12,8 +12,12 @@ import argparse
 from gooey import Gooey, GooeyParser
 
 # Importing custom modules from CloudCompare
-import CloudCompare.cloudComPy as cc
-import CloudCompare.cloudComPy.CSF
+import cloudComPy as cc
+import cloudComPy.CSF
+
+# No
+# import CloudCompare.cloudComPy as cc
+# import CloudCompare.cloudComPy.CSF
 
 # os.environ["_CCTRACE_"]="ON" # Uncomment to enable C++ debug traces (optional)
 

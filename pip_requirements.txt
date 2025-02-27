@@ -1,0 +1,4 @@
+exifread
+pandas
+py7zr
+astropy
